@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-900 min-h-screen text-white">
+    
+    <!-- Fixed Left Sidebar Menu (matches your screenshot) -->
+    <nav class="fixed left-0 top-0 h-full w-64 bg-black/80 backdrop-blur-md z-50 flex flex-col p-8">
+        <div class="flex items-center mb-12">
+            <i class="fas fa-user-circle text-4xl text-cyan-400 mr-4"></i>
+            <h1 class="text-2xl font-bold text-cyan-400">Your Name</h1>
+        </div>
+        <ul class="space-y-6 text-lg">
+            <li><a href="#hero" class="flex items-center text-cyan-400 hover:text-white transition-all"><i class="fas fa-home mr-3"></i>Quest</a></li>
+            <li><a href="#projects" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Projects</a></li>
+            <li><a href="#skills" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-code mr-3"></i>Skills</a></li>
+            <li><a href="#contact" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-map-marker mr-3"></i>Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content (offset for sidebar) -->
+    <main class="ml-64 p-12">
+        <!-- Hero -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center">
+            <div>
+                <h1 class="text-6xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-8">
+                    Portfolio 2026
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto">
+                    Affiliate Marketer | Tech Content Creator | PC Builder
+                </p>
+            </div>
+        </section>
+
+        <!-- Projects from Firestore -->
+        <section id="projects" class="py-32">
+            <h2 class="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto" id="projectsGrid">
+                <!-- Firestore loads here -->
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section id="skills" class="py-32 bg-black/30 rounded-3xl mx-12 mb-32">
+            <h2 class="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Skills</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div class="text-center p-8"><i class="fas fa-laptop-code text-5xl text-cyan-400 mb-4 block"></i>AI Video</div>
+                <div class="text-center p-8"><i class="fas fa-video text-5xl text-cyan-400 mb-4 block"></i>Reels Edit</div>
+                <div class="text-center p-8"><i class="fas fa-chart-line text-5xl text-cyan-400 mb-4 block"></i>Affiliate</div>
+                <div class="text-center p-8"><i class="fas fa-cogs text-5xl text-cyan-400 mb-4 block"></i>PC Build</div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="py-32">
+            <h2 class="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Contact</h2>
+            <p class="text-2xl text-center mb-12">Char Bhadrāsan, Dhaka Division, BD</p>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.123456789!2d90.4!3d23.8" 
+                class="w-full max-w-4xl mx-auto h-96 rounded-3xl" loading="lazy"></iframe>
+        </section>
+    </main>
+
+    <!-- MODERN FIREBASE V10+ (ES Modules) -->
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        // YOUR EXACT CONFIG from my-portfolio-6d703
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
+            authDomain: "my-portfolio-6d703.firebaseapp.com",
+            projectId: "my-portfolio-6d703",
+            storageBucket: "my-portfolio-6d703.firebasestorage.app",
+            messagingSenderId: "587930086992",
+            appId: "1:587930086992:web:3deafa045acc32456d6b55"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load projects from Firestore 'projects' collection
+        async function loadProjects() {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'projects'));
+                const grid = document.getElementById('projectsGrid');
+                grid.innerHTML = ''; // Clear loading state
+
+                if (querySnapshot.empty) {
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">Add projects in Firestore console → Collections → "projects"</div>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    grid.innerHTML += `
+                        <div class="group bg-black/50 backdrop-blur-md rounded-3xl p-8 hover:bg-white/10 transition-all hover:scale-105 cursor-pointer">
+                            <img src="${data.img || 'https://via.placeholder.com/400x200/1a1a3a/00d4ff?text=Project'}" alt="${data.title}" class="w-full h-48 object-cover rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <h3 class="text-2xl font-bold mb-4 text-cyan-400">${data.title}</h3>
+                            <p class="text-gray-300">${data.desc}</p>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Firestore Error:", error);
+                document.getElementById('projectsGrid').innerHTML = '<div class="col-span-full text-center py-20 text-red-400">Firestore Error - Check console (F12)</div>';
+            }
+        }
+
+        // Load projects on page load
+        loadProjects();
+
+        // Smooth scrolling for menu
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
