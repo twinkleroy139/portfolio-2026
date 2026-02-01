@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Access – Portfolio</title>
+  <title>Admin Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -11,86 +11,41 @@
 
   <div class="bg-black/50 p-10 rounded-3xl w-full max-w-md">
     <h1 class="text-3xl font-bold text-cyan-400 mb-6 text-center">
-      Admin Access
+      Admin Login
     </h1>
 
-    <!-- Tabs -->
-    <div class="flex mb-6">
-      <button onclick="showLogin()" id="loginTab" class="flex-1 py-2 font-bold border-b-2 border-cyan-400">
-        Sign In
-      </button>
-      <button onclick="showRegister()" id="registerTab" class="flex-1 py-2 font-bold border-b-2 border-transparent text-gray-400">
-        Create Account
-      </button>
-    </div>
-
-    <!-- LOGIN -->
     <form id="loginForm" class="space-y-4">
-      <input id="loginEmail" type="email" placeholder="Email"
-        class="w-full p-4 rounded-xl bg-black/30 border border-gray-600" required>
-
-      <input id="loginPass" type="password" placeholder="Password"
-        class="w-full p-4 rounded-xl bg-black/30 border border-gray-600" required>
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter Admin Password"
+        class="w-full p-4 rounded-xl bg-black/30 border border-gray-600"
+        required
+      >
 
       <button class="w-full bg-cyan-500 hover:bg-cyan-600 p-4 rounded-xl font-bold text-black">
         Sign In
       </button>
 
-      <p id="loginError" class="text-red-400 text-center hidden">Invalid credentials</p>
-    </form>
-
-    <!-- REGISTER -->
-    <form id="registerForm" class="space-y-4 hidden">
-      <input id="regEmail" type="email" placeholder="Email"
-        class="w-full p-4 rounded-xl bg-black/30 border border-gray-600" required>
-
-      <input id="regPass" type="password" placeholder="Password"
-        class="w-full p-4 rounded-xl bg-black/30 border border-gray-600" required>
-
-      <button class="w-full bg-green-500 hover:bg-green-600 p-4 rounded-xl font-bold text-black">
-        Create Account
-      </button>
-
-      <p id="regSuccess" class="text-green-400 text-center hidden">
-        Account created! You can sign in.
+      <p id="error" class="text-red-400 text-center hidden">
+        Wrong password
       </p>
     </form>
   </div>
 
 <script>
-  function showLogin() {
-    loginForm.classList.remove("hidden");
-    registerForm.classList.add("hidden");
-    loginTab.classList.add("border-cyan-400");
-    registerTab.classList.remove("border-cyan-400");
-  }
+  const ADMIN_PASSWORD = "portfolio2026";
 
-  function showRegister() {
-    loginForm.classList.add("hidden");
-    registerForm.classList.remove("hidden");
-    registerTab.classList.add("border-cyan-400");
-    loginTab.classList.remove("border-cyan-400");
-  }
-
-  // REGISTER
-  registerForm.addEventListener("submit", e => {
+  document.getElementById("loginForm").addEventListener("submit", e => {
     e.preventDefault();
-    localStorage.setItem("adminUser", regEmail.value);
-    localStorage.setItem("adminPass", regPass.value);
-    regSuccess.classList.remove("hidden");
-    showLogin();
-  });
 
-  // LOGIN
-  loginForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const email = localStorage.getItem("adminUser");
-    const pass = localStorage.getItem("adminPass");
+    const pass = document.getElementById("password").value;
 
-    if (loginEmail.value === email && loginPass.value === pass) {
-      location.href = "/admin.html";
+    if (pass === ADMIN_PASSWORD) {
+      localStorage.setItem("adminPass", ADMIN_PASSWORD);
+      window.location.href = "/admin.html";
     } else {
-      loginError.classList.remove("hidden");
+      document.getElementById("error").classList.remove("hidden");
     }
   });
 </script>
