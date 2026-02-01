@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Portfolio 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-indigo-950 to-slate-900 min-h-screen text-white p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-12">
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <i class="fas fa-cog mr-4"></i>Admin Panel
+            </h1>
+            <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-6 py-2 rounded-xl text-white font-bold">Logout</button>
+        </div>
+
+        <!-- Add New Project Form -->
+        <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Add New Project</h2>
+            <form id="addProjectForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <input type="text" id="title" placeholder="Project Title" class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                <input type="url" id="img" placeholder="Image URL" class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                <textarea id="desc" placeholder="Description" rows="3" class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
+                <button type="submit" class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                    <i class="fas fa-plus mr-2"></i>Add Project
+                </button>
+            </form>
+        </div>
+
+        <!-- Projects List -->
+        <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Projects List</h2>
+            <div id="projectsList" class="space-y-4">
+                <!-- Loads dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
+            authDomain: "my-portfolio-6d703.firebaseapp.com",
+            projectId: "my-portfolio-6d703",
+            storageBucket: "my-portfolio-6d703.firebasestorage.app",
+            messagingSenderId: "587930086992",
+            appId: "1:587930086992:web:3deafa045acc32456d6b55"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const ADMIN_PASSWORD = "portfolio2026";
+        const password = localStorage.getItem('adminPass') || prompt('Admin Password:');
+        if (password !== ADMIN_PASSWORD) {
+            alert('Wrong password!');
+            window.location.href = '/';
+        }
+        localStorage.setItem('adminPass', password);
+
+        document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const img = document.getElementById('img').value;
+            const desc = document.getElementById('desc').value;
+
+            try {
+                await addDoc(collection(db, 'projects'), { title, img, desc });
+                alert('✅ Project added!');
+                loadProjects();
+                e.target.reset();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        async function loadProjects() {
+            try {
+                const q = query(collection(db, 'projects'), orderBy('title'));
+                const snapshot = await getDocs(q);
+                const list = document.getElementById('projectsList');
+                list.innerHTML = '';
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center p-6 bg-gray-800/50 rounded-2xl group hover:bg-gray-700/50">
+                            <div>
+                                <h3 class="font-bold text-xl">${data.title}</h3>
+                                <img src="${data.img}" class="w-24 h-16 object-cover rounded-lg mt-2">
+                                <p class="text-gray-300 mt-2">${data.desc.substring(0, 100)}...</p>
+                            </div>
+                            <button onclick="deleteProject('${doc.id}')" class="bg-red-500 hover:bg-red-600 p-3 rounded-xl text-white font-bold group-hover:scale-110">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                document.getElementById('projectsList').innerHTML = '<div class="text-red-400 p-8">Error loading projects</div>';
+            }
+        }
+
+        window.deleteProject = async (id) => {
+            if (confirm('Delete this project?')) {
+                await deleteDoc(doc(db, 'projects', id));
+                loadProjects();
+            }
+        };
+
+        window.logout = () => {
+            localStorage.removeItem('adminPass');
+            window.location.href = '/';
+        };
+
+        loadProjects();
+    </script>
+</body>
+</html>
