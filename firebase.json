@@ -6,11 +6,12 @@
       "**/.*",
       "**/node_modules/**"
     ],
+
     "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+  { "source": "/admin.html", "destination": "/admin.html" },
+  { "source": "/login.html", "destination": "/login.html" },
+  { "source": "**", "destination": "/index.html" }
+]
+
   }
 }
