@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,23 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gradient-to-br from-indigo-950 to-slate-900 min-h-screen text-white p-8">
     <div class="max-w-4xl mx-auto">
         <div class="flex justify-between items-center mb-12">
             <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                 <i class="fas fa-cog mr-4"></i>Admin Panel
             </h1>
-            <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-6 py-2 rounded-xl text-white font-bold">Logout</button>
+            <button onclick="logout()"
+                class="bg-red-500 hover:bg-red-600 px-6 py-2 rounded-xl text-white font-bold">Logout</button>
         </div>
 
         <!-- Add New Project Form -->
         <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
             <h2 class="text-2xl font-bold mb-6 text-cyan-400">Add New Project</h2>
             <form id="addProjectForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" id="title" placeholder="Project Title" class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <input type="url" id="img" placeholder="Image URL" class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <textarea id="desc" placeholder="Description" rows="3" class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
-                <button type="submit" class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                <input type="text" id="title" placeholder="Project Title"
+                    class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                <input type="url" id="img" placeholder="Image URL"
+                    class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                <textarea id="desc" placeholder="Description" rows="3"
+                    class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
+                <button type="submit"
+                    class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
                     <i class="fas fa-plus mr-2"></i>Add Project
                 </button>
             </form>
@@ -54,13 +61,25 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+
+
+        // const ADMIN_PASSWORD = "portfolio2026";
+        // const password = localStorage.getItem('adminPass') || prompt('Admin Password:');
+        // if (password !== ADMIN_PASSWORD) {
+        //     alert('Wrong password!');
+        //     window.location.href = '/';
+        // }
+        // localStorage.setItem('adminPass', password);
+
         const ADMIN_PASSWORD = "portfolio2026";
-        const password = localStorage.getItem('adminPass') || prompt('Admin Password:');
-        if (password !== ADMIN_PASSWORD) {
-            alert('Wrong password!');
-            window.location.href = '/';
+        const pass = localStorage.getItem("adminPass");
+
+        if (pass !== ADMIN_PASSWORD) {
+            location.href = "/login.html";
         }
-        localStorage.setItem('adminPass', password);
+
+
+
 
         document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -112,12 +131,18 @@
             }
         };
 
+        // window.logout = () => {
+        //     localStorage.removeItem('adminPass');
+        //     window.location.href = '/';
+        // };
+
         window.logout = () => {
-            localStorage.removeItem('adminPass');
-            window.location.href = '/';
+            localStorage.removeItem("adminPass");
+            location.href = "/login.html";
         };
 
         loadProjects();
     </script>
 </body>
+
 </html>
