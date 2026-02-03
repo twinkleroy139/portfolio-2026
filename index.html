@@ -79,22 +79,11 @@
             import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
             import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
-                authDomain: "my-portfolio-6d703.firebaseapp.com",
-                projectId: "my-portfolio-6d703",
-                storageBucket: "my-portfolio-6d703.firebasestorage.app",
-                messagingSenderId: "587930086992",
-                appId: "1:587930086992:web:3deafa045acc32456d6b55"
-            };
-
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-
+            // Firebase will be initialized in the main script below
             let currentIndex = 0;
             const slider = document.getElementById('slider');
 
-            async function loadHeroImages() {
+            async function loadHeroImages(db) {
                 try {
                     const q = query(collection(db, 'heroImages'), orderBy('order'));
                     const snapshot = await getDocs(q);
@@ -142,7 +131,10 @@
                 }
             }
 
-            loadHeroImages();
+            // Will be called from main Firebase script with db parameter
+            window.loadHeroImagesFromSlide = async function(db) {
+                await loadHeroImages(db);
+            }
         </script>
 
 
@@ -207,6 +199,11 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // Load hero images first
+        if (window.loadHeroImagesFromSlide) {
+            window.loadHeroImagesFromSlide(db);
+        }
 
         // Load projects from Firestore 'projects' collection
         async function loadProjects() {
