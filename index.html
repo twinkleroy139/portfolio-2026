@@ -51,13 +51,7 @@
             <!-- Image Slider -->
             <div class="w-full max-w-3xl relative overflow-hidden rounded-lg shadow-lg">
                 <div id="slider" class="flex transition-transform duration-700 ease-in-out">
-                    <!-- Example images (replace with Firebase data later) -->
-                    <img src="https://imgs.search.brave.com/tTtD9NjRfZIHzunrJaMfHBUvMlEzplewOncWFga6Jdw/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zYWJp/bWFnZXMuY29tL3dw/LWNvbnRlbnQvdXBs/b2Fkcy8yMDI0LzA4/L0FuaW1lLWJveS1k/cDUxLmpwZw"
-                        class="w-full flex-shrink-0" alt="Hero Image 1">
-                    <img src="https://imgs.search.brave.com/QzUKT80Csz73VP2FGkjIYpHyGD6VYN8W13BQp7ucgrE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5jcmFpeW9uLmNv/bS8yMDI1LTEwLTA5/L2dmbWxTRDZ0UVpH/aWFSNDNPLW1NR0Eu/d2VicA"
-                        class="w-full flex-shrink-0" alt="Hero Image 2">
-                    <img src="https://imgs.search.brave.com/st8hZV2hmNI6Qhro1HsAAx7ho8JVTswFoAZ3gNrKAXY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9jdXRlLWFuaW1l/LWJveS13YWxscGFw/ZXJfNzc2ODk0LTEw/OTEzNi5qcGc_c2Vt/dD1haXNfaHlicmlk/Jnc9NzQwJnE9ODA"
-                        class="w-full flex-shrink-0" alt="Hero Image 3">
+                    <!-- Hero images load from Firebase -->
                 </div>
 
                 <!-- Slider Controls -->
@@ -81,29 +75,74 @@
 
         </section>
 
-        <script>
+        <script type="module">
+            import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+            import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
+                authDomain: "my-portfolio-6d703.firebaseapp.com",
+                projectId: "my-portfolio-6d703",
+                storageBucket: "my-portfolio-6d703.firebasestorage.app",
+                messagingSenderId: "587930086992",
+                appId: "1:587930086992:web:3deafa045acc32456d6b55"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
             let currentIndex = 0;
             const slider = document.getElementById('slider');
-            const slides = slider.children;
-            const totalSlides = slides.length;
 
-            function showSlide(index) {
-                if (index < 0) index = totalSlides - 1;
-                if (index >= totalSlides) index = 0;
-                currentIndex = index;
-                slider.style.transform = `translateX(-${index * 100}%)`;
+            async function loadHeroImages() {
+                try {
+                    const q = query(collection(db, 'heroImages'), orderBy('order'));
+                    const snapshot = await getDocs(q);
+                    
+                    slider.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const img = document.createElement('img');
+                        img.src = data.img;
+                        img.alt = data.title || "Hero Image";
+                        img.className = "w-full flex-shrink-0 object-cover";
+                        slider.appendChild(img);
+                    });
+
+                    if (slider.children.length === 0) {
+                        slider.innerHTML = '<div class="w-full flex-shrink-0 bg-gray-700 flex items-center justify-center"><p>No hero images yet</p></div>';
+                    }
+                    
+                    initSlider();
+                } catch (error) {
+                    console.error('Error loading hero images:', error);
+                }
             }
 
-            function nextSlide() {
-                showSlide(currentIndex + 1);
+            function initSlider() {
+                const totalSlides = slider.children.length;
+
+                function showSlide(index) {
+                    if (index < 0) index = totalSlides - 1;
+                    if (index >= totalSlides) index = 0;
+                    currentIndex = index;
+                    slider.style.transform = `translateX(-${index * 100}%)`;
+                }
+
+                window.nextSlide = function() {
+                    showSlide(currentIndex + 1);
+                };
+
+                window.prevSlide = function() {
+                    showSlide(currentIndex - 1);
+                };
+
+                if (totalSlides > 1) {
+                    setInterval(window.nextSlide, 5000);
+                }
             }
 
-            function prevSlide() {
-                showSlide(currentIndex - 1);
-            }
-
-            // Auto-slide every 5s
-            setInterval(nextSlide, 5000);
+            loadHeroImages();
         </script>
 
 
