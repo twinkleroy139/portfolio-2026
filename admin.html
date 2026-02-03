@@ -7,72 +7,258 @@
     <title>Admin Panel - Portfolio 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+        .tab-btn.active { 
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: black;
+        }
+        .tab-btn:not(.active) { 
+            background-color: #374151;
+        }
+        .tab-btn:not(.active):hover {
+            background-color: #4b5563;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-br from-indigo-950 to-slate-900 min-h-screen text-white p-8">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-12">
             <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                <i class="fas fa-cog mr-4"></i>Admin Panel
+                <i class="fas fa-cog mr-4"></i>Admin Dashboard
             </h1>
             <button onclick="logout()"
                 class="bg-red-500 hover:bg-red-600 px-6 py-2 rounded-xl text-white font-bold">Logout</button>
         </div>
 
-        <!-- Add New Hero Image Form -->
-        <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
-            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Add Hero Image</h2>
-            <form id="addHeroForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" id="heroTitle" placeholder="Image Title (optional)"
-                    class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <input type="number" id="heroOrder" placeholder="Display Order (1, 2, 3...)" min="1"
-                    class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <input type="url" id="heroImg" placeholder="Image URL"
-                    class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <button type="submit"
-                    class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
-                    <i class="fas fa-plus mr-2"></i>Add Hero Image
-                </button>
-            </form>
+        <!-- Navigation Tabs -->
+        <div class="flex gap-2 mb-8 flex-wrap">
+            <button onclick="switchSection('hero')" class="tab-btn active px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-image mr-2"></i>Hero</button>
+            <button onclick="switchSection('about')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-user mr-2"></i>About</button>
+            <button onclick="switchSection('education')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-graduation-cap mr-2"></i>Education</button>
+            <button onclick="switchSection('skills')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-bolt mr-2"></i>Skills</button>
+            <button onclick="switchSection('projects')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Projects</button>
+            <button onclick="switchSection('messages')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-envelope mr-2"></i>Messages <span id="messageCount" class="bg-red-500 px-2 py-1 rounded ml-2 text-xs">0</span></button>
+            <button onclick="switchSection('contact')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-phone mr-2"></i>Contact Info</button>
         </div>
 
-        <!-- Hero Images List -->
-        <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
-            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Hero Images</h2>
-            <div id="heroImagesList" class="space-y-4">
-                <!-- Loads dynamically -->
+        <!-- ===== MESSAGES SECTION ===== -->
+        <div id="section-messages" class="section-content">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-envelope mr-2"></i>Contact Messages</h2>
+                <div id="messagesList" class="space-y-4">
+                    <p class="text-gray-400 p-4">Loading messages...</p>
+                </div>
             </div>
         </div>
 
-        <!-- Add New Project Form -->
-        <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
-            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Add New Project</h2>
-            <form id="addProjectForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" id="title" placeholder="Project Title"
-                    class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <input type="url" id="img" placeholder="Image URL"
-                    class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                <textarea id="desc" placeholder="Description" rows="3"
-                    class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
-                <button type="submit"
-                    class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
-                    <i class="fas fa-plus mr-2"></i>Add Project
-                </button>
-            </form>
+        <!-- ===== CONTACT INFO SECTION ===== -->
+        <div id="section-contact" class="section-content">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-phone mr-2"></i>Edit Contact Information</h2>
+                <form id="editContactForm" class="space-y-6">
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Address</label>
+                        <input type="text" id="contactAddressText" placeholder="Dhaka, Bangladesh"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Phone Number</label>
+                        <input type="tel" id="contactPhoneText" placeholder="+880 1709047397"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Email Address</label>
+                        <input type="email" id="contactEmailText" placeholder="goutom.roy0364@gmail.com"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                        <i class="fas fa-save mr-2"></i>Save Contact Information
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <!-- Projects List -->
-        <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
-            <h2 class="text-2xl font-bold mb-6 text-cyan-400">Projects List</h2>
-            <div id="projectsList" class="space-y-4">
-                <!-- Loads dynamically -->
+        <!-- ===== HERO SECTION ===== -->
+        <div id="section-hero" class="section-content active">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-plus mr-2"></i>Add Hero Image</h2>
+                <form id="addHeroForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" id="heroTitle" placeholder="Image Title (optional)"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <input type="number" id="heroOrder" placeholder="Display Order (1, 2, 3...)" min="1"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <input type="url" id="heroImg" placeholder="Image URL"
+                        class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <button type="submit"
+                        class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                        <i class="fas fa-plus mr-2"></i>Add Hero Image
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400">Hero Images List</h2>
+                <div id="heroImagesList" class="space-y-4">
+                    <!-- Loads dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ABOUT SECTION ===== -->
+        <div id="section-about" class="section-content">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-user mr-2"></i>Edit About Section</h2>
+                <form id="editAboutForm" class="space-y-6">
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Intro Text</label>
+                        <textarea id="aboutIntroText" placeholder="Enter intro text" rows="2"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Main Headline</label>
+                        <input type="text" id="aboutHeadlineText" placeholder="e.g., Building Seamless Digital Experiences"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Description Paragraph</label>
+                        <textarea id="aboutDescriptionText" placeholder="Enter detailed description" rows="3"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-cyan-400 font-semibold mb-2">Email</label>
+                            <input type="email" id="aboutEmailText" placeholder="your.email@example.com"
+                                class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-cyan-400 font-semibold mb-2">Core Tech</label>
+                            <input type="text" id="aboutCoreTechText" placeholder="Java, Python, Android, etc"
+                                class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-cyan-400 font-semibold mb-2">Degree</label>
+                            <input type="text" id="aboutDegreeText" placeholder="Computer Science & Engineering"
+                                class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        </div>
+                        <div>
+                            <label class="block text-cyan-400 font-semibold mb-2">Status</label>
+                            <input type="text" id="aboutStatusText" placeholder="Actively Seeking Internships"
+                                class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                        <i class="fas fa-save mr-2"></i>Save About Section
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== EDUCATION SECTION ===== -->
+        <div id="section-education" class="section-content">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-graduation-cap mr-2"></i>Edit Education Section</h2>
+                <form id="editEducationForm" class="space-y-6">
+                    <h3 class="text-xl font-bold text-cyan-300 mt-8 mb-4">Bachelor of Science (CSE)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="eduBSCUniversityText" placeholder="University"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="eduBSCCGPAText" placeholder="CGPA (e.g., 3.54 / 4.00)"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="eduBSCYearText" placeholder="Year (e.g., 2026)"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+
+                    <h3 class="text-xl font-bold text-cyan-300 mt-8 mb-4">Higher Secondary Certificate</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="eduHSCInstituteText" placeholder="Institute"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="eduHSCGPAText" placeholder="GPA (e.g., 5.00 / 5.00)"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="eduHSCYearText" placeholder="Year (e.g., 2020)"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+
+                    <h3 class="text-xl font-bold text-cyan-300 mt-8 mb-4">Secondary School Certificate</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="eduSSCInstituteText" placeholder="Institute"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="eduSSCGPAText" placeholder="GPA (e.g., 5.00 / 5.00)"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="eduSSCYearText" placeholder="Year (e.g., 2018)"
+                            class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold mt-8">
+                        <i class="fas fa-save mr-2"></i>Save Education Section
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== SKILLS SECTION ===== -->
+        <div id="section-skills" class="section-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Add Skill Form -->
+                <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 md:col-span-1">
+                    <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-plus mr-2"></i>Add Skill</h2>
+                    <form id="addSkillForm" class="space-y-4">
+                        <input type="text" id="skillName" placeholder="Skill Name (e.g., JavaScript)"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="url" id="skillIcon" placeholder="Icon URL (e.g., https://...)"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                            <i class="fas fa-plus mr-2"></i>Add Skill
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Skills List -->
+                <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 md:col-span-1">
+                    <h2 class="text-2xl font-bold mb-6 text-cyan-400">Technical Stack</h2>
+                    <div id="skillsList" class="space-y-3">
+                        <!-- Loads dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PROJECTS SECTION ===== -->
+        <div id="section-projects" class="section-content">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-plus mr-2"></i>Add New Project</h2>
+                <form id="addProjectForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="text" id="title" placeholder="Project Title"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <input type="url" id="img" placeholder="Image URL"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <textarea id="desc" placeholder="Description" rows="3"
+                        class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
+                    <button type="submit"
+                        class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                        <i class="fas fa-plus mr-2"></i>Add Project
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400">Projects List</h2>
+                <div id="projectsList" class="space-y-4">
+                    <!-- Loads dynamically -->
+                </div>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, doc, orderBy, query, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
@@ -86,7 +272,119 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // ===== HERO IMAGES MANAGEMENT =====
+        const ADMIN_PASSWORD = "portfolio2026";
+        const pass = localStorage.getItem("adminPass");
+
+        if (pass !== ADMIN_PASSWORD) {
+            location.href = "/login.html";
+        }
+
+        // ===== TAB NAVIGATION =====
+        window.switchSection = function(section) {
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`section-${section}`).classList.add('active');
+            event.target.classList.add('active');
+        };
+
+        // ===== MESSAGES =====
+        async function loadMessages() {
+            try {
+                const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                const list = document.getElementById('messagesList');
+                const count = snapshot.size;
+                document.getElementById('messageCount').textContent = count;
+
+                list.innerHTML = '';
+
+                if (snapshot.empty) {
+                    list.innerHTML = '<p class="text-gray-400 p-4">No messages yet</p>';
+                    return;
+                }
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    let date = '';
+                    try {
+                        if (data && data.createdAt) {
+                            // Firestore may return a Timestamp object with toDate()
+                            if (typeof data.createdAt.toDate === 'function') {
+                                date = data.createdAt.toDate().toLocaleString();
+                            } else if (typeof data.createdAt === 'string') {
+                                date = new Date(data.createdAt).toLocaleString();
+                            } else {
+                                date = new Date(data.createdAt).toLocaleString();
+                            }
+                        }
+                    } catch (err) {
+                        date = '';
+                    }
+
+                    list.innerHTML += `
+                        <div class="bg-gray-800/50 rounded-2xl p-6 group hover:bg-gray-700/50">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-bold text-lg text-cyan-400">${data.name}</h3>
+                                    <p class="text-sm text-gray-400">${data.email}</p>
+                                </div>
+                                <button onclick="deleteMessage('${docSnap.id}')" class="bg-red-500 hover:bg-red-600 p-2 rounded text-white">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-semibold text-white mb-2">Subject: ${data.subject}</h4>
+                            <p class="text-gray-300 mb-3">${data.message}</p>
+                            <p class="text-xs text-gray-500"><i class="fas fa-clock mr-1"></i>${date}</p>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error loading messages:", error);
+            }
+        }
+
+        window.deleteMessage = async (id) => {
+            if (confirm('Delete this message?')) {
+                await deleteDoc(doc(db, 'messages', id));
+                loadMessages();
+            }
+        };
+
+        // ===== CONTACT INFO =====
+        document.getElementById('editContactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const contactData = {
+                    address: document.getElementById('contactAddressText').value,
+                    phone: document.getElementById('contactPhoneText').value,
+                    email: document.getElementById('contactEmailText').value,
+                    updatedAt: new Date()
+                };
+                
+                await setDoc(doc(db, 'contact', 'main'), contactData);
+                alert('✅ Contact information updated!');
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        async function loadContactForm() {
+            try {
+                const contactRef = doc(db, 'contact', 'main');
+                const snap = await getDoc(contactRef);
+                if (snap && snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('contactAddressText').value = data.address || '';
+                    document.getElementById('contactPhoneText').value = data.phone || '';
+                    document.getElementById('contactEmailText').value = data.email || '';
+                }
+            } catch (error) {
+                console.error("Error loading contact form:", error);
+            }
+        }
+
+        // ===== HERO IMAGES =====
         document.getElementById('addHeroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('heroTitle').value || 'Hero Image';
@@ -135,7 +433,7 @@
                     list.innerHTML = '<p class="text-gray-400 p-4">No hero images yet</p>';
                 }
             } catch (error) {
-                document.getElementById('heroImagesList').innerHTML = '<div class="text-red-400 p-8">Error loading hero images</div>';
+                console.error("Error loading hero images:", error);
             }
         }
 
@@ -146,24 +444,183 @@
             }
         };
 
-        // ===== PROJECTS MANAGEMENT =====
-        // const password = localStorage.getItem('adminPass') || prompt('Admin Password:');
-        // if (password !== ADMIN_PASSWORD) {
-        //     alert('Wrong password!');
-        //     window.location.href = '/';
-        // }
-        // localStorage.setItem('adminPass', password);
+        // ===== ABOUT SECTION =====
+        document.getElementById('editAboutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const aboutData = {
+                    introText: document.getElementById('aboutIntroText').value,
+                    headline: document.getElementById('aboutHeadlineText').value,
+                    description: document.getElementById('aboutDescriptionText').value,
+                    email: document.getElementById('aboutEmailText').value,
+                    coreTech: document.getElementById('aboutCoreTechText').value,
+                    degree: document.getElementById('aboutDegreeText').value,
+                    status: document.getElementById('aboutStatusText').value,
+                    updatedAt: new Date()
+                };
+                
+                await setDoc(doc(db, 'about', 'main'), aboutData);
+                alert('✅ About section updated!');
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
 
-        const ADMIN_PASSWORD = "portfolio2026";
-        const pass = localStorage.getItem("adminPass");
-
-        if (pass !== ADMIN_PASSWORD) {
-            location.href = "/login.html";
+        async function loadAboutForm() {
+            try {
+                const aboutDoc = await getDocs(collection(db, 'about'));
+                if (!aboutDoc.empty) {
+                    const data = aboutDoc.docs[0].data();
+                    document.getElementById('aboutIntroText').value = data.introText || '';
+                    document.getElementById('aboutHeadlineText').value = data.headline || '';
+                    document.getElementById('aboutDescriptionText').value = data.description || '';
+                    document.getElementById('aboutEmailText').value = data.email || '';
+                    document.getElementById('aboutCoreTechText').value = data.coreTech || '';
+                    document.getElementById('aboutDegreeText').value = data.degree || '';
+                    document.getElementById('aboutStatusText').value = data.status || '';
+                }
+            } catch (error) {
+                console.error("Error loading about form:", error);
+            }
         }
 
+        // ===== EDUCATION SECTION =====
+        document.getElementById('editEducationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const educationData = {
+                    bsc: {
+                        university: document.getElementById('eduBSCUniversityText').value,
+                        cgpa: document.getElementById('eduBSCCGPAText').value,
+                        year: document.getElementById('eduBSCYearText').value
+                    },
+                    hsc: {
+                        institute: document.getElementById('eduHSCInstituteText').value,
+                        gpa: document.getElementById('eduHSCGPAText').value,
+                        year: document.getElementById('eduHSCYearText').value
+                    },
+                    ssc: {
+                        institute: document.getElementById('eduSSCInstituteText').value,
+                        gpa: document.getElementById('eduSSCGPAText').value,
+                        year: document.getElementById('eduSSCYearText').value
+                    },
+                    updatedAt: new Date()
+                };
+                
+                await setDoc(doc(db, 'education', 'main'), educationData);
+                alert('✅ Education section updated!');
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
 
+        async function loadEducationForm() {
+            try {
+                const eduDoc = await getDocs(collection(db, 'education'));
+                if (!eduDoc.empty) {
+                    const data = eduDoc.docs[0].data();
+                    if (data.bsc) {
+                        document.getElementById('eduBSCUniversityText').value = data.bsc.university || '';
+                        document.getElementById('eduBSCCGPAText').value = data.bsc.cgpa || '';
+                        document.getElementById('eduBSCYearText').value = data.bsc.year || '';
+                    }
+                    if (data.hsc) {
+                        document.getElementById('eduHSCInstituteText').value = data.hsc.institute || '';
+                        document.getElementById('eduHSCGPAText').value = data.hsc.gpa || '';
+                        document.getElementById('eduHSCYearText').value = data.hsc.year || '';
+                    }
+                    if (data.ssc) {
+                        document.getElementById('eduSSCInstituteText').value = data.ssc.institute || '';
+                        document.getElementById('eduSSCGPAText').value = data.ssc.gpa || '';
+                        document.getElementById('eduSSCYearText').value = data.ssc.year || '';
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading education form:", error);
+            }
+        }
 
+        // ===== SKILLS MANAGEMENT =====
+        document.getElementById('addSkillForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('skillName').value;
+            const icon = document.getElementById('skillIcon').value;
 
+            if (!name || !icon) {
+                alert('❌ Please enter skill name and icon URL');
+                return;
+            }
+
+            try {
+                const skillsDoc = await getDocs(collection(db, 'skills'));
+                let items = [];
+                let docId = 'main';
+
+                if (!skillsDoc.empty) {
+                    const data = skillsDoc.docs[0].data();
+                    items = data.items || [];
+                    docId = skillsDoc.docs[0].id;
+                }
+
+                items.push({ name, icon });
+                await setDoc(doc(db, 'skills', docId), { items });
+                alert('✅ Skill added!');
+                loadSkills();
+                e.target.reset();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        async function loadSkills() {
+            try {
+                const skillsDoc = await getDocs(collection(db, 'skills'));
+                const list = document.getElementById('skillsList');
+                list.innerHTML = '';
+
+                if (!skillsDoc.empty) {
+                    const data = skillsDoc.docs[0].data();
+                    const docId = skillsDoc.docs[0].id;
+
+                    if (data.items && Array.isArray(data.items)) {
+                        data.items.forEach((skill, index) => {
+                            list.innerHTML += `
+                                <div class="flex justify-between items-center p-4 bg-gray-800/50 rounded-xl group hover:bg-gray-700/50">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${skill.icon}" alt="${skill.name}" class="w-8 h-8 object-contain">
+                                        <span class="text-white">${skill.name}</span>
+                                    </div>
+                                    <button onclick="deleteSkill('${docId}', ${index})" class="bg-red-500 hover:bg-red-600 p-2 rounded-lg text-white">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading skills:", error);
+            }
+        }
+
+        window.deleteSkill = async (docId, index) => {
+            if (confirm('Delete this skill?')) {
+                try {
+                    const snap = await getDocs(collection(db, 'skills'));
+                    if (!snap.empty) {
+                        const data = snap.docs[0].data();
+                        let items = data.items || [];
+                        items.splice(index, 1);
+                        await setDoc(doc(db, 'skills', docId), { items });
+                        loadSkills();
+                    }
+                } catch (error) {
+                    alert('❌ Error: ' + error.message);
+                }
+            }
+        };
+
+        // ===== PROJECTS =====
         document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('title').value;
@@ -203,7 +660,7 @@
                     `;
                 });
             } catch (error) {
-                document.getElementById('projectsList').innerHTML = '<div class="text-red-400 p-8">Error loading projects</div>';
+                console.error("Error loading projects:", error);
             }
         }
 
@@ -219,8 +676,14 @@
             location.href = "/login.html";
         };
 
+        // Initialize all sections
         loadHeroImages();
+        loadAboutForm();
+        loadEducationForm();
+        loadSkills();
         loadProjects();
+        loadMessages();
+        loadContactForm();
     </script>
 </body>
 
