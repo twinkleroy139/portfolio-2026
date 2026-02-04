@@ -337,14 +337,29 @@
                 <form id="addProjectForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <input type="text" id="title" placeholder="Project Title"
                         class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <select id="category" class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <option value="web">Web</option>
+                        <option value="mobile">Mobile apps</option>
+                        <option value="tool">Tool</option>
+                        <option value="other">Other</option>
+                    </select>
                     <input type="url" id="img" placeholder="Image URL"
                         class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
-                    <textarea id="desc" placeholder="Description" rows="3"
+                    <input type="text" id="techStack" placeholder="Tech Stack (comma separated)"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <input type="url" id="previewLink" placeholder="Preview Link (optional)"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <input type="url" id="detailsLink" placeholder="Details Link (optional)"
+                        class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    <textarea id="desc" placeholder="Short description" rows="3"
                         class="md:col-span-2 p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
-                    <button type="submit"
-                        class="md:col-span-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
-                        <i class="fas fa-plus mr-2"></i>Add Project
-                    </button>
+                    <div class="md:col-span-2 flex gap-3">
+                        <button id="projectSubmitBtn" type="submit"
+                            class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                            <i class="fas fa-plus mr-2"></i><span id="projectSubmitText">Add Project</span>
+                        </button>
+                        <button id="cancelEditBtn" type="button" class="hidden bg-gray-700 hover:bg-gray-600 p-4 rounded-xl text-white">Cancel Edit</button>
+                    </div>
                 </form>
             </div>
 
@@ -829,19 +844,73 @@
         // ===== PROJECTS =====
         document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const form = e.target;
+            const editId = form.dataset.editId || '';
             const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value || 'other';
             const img = document.getElementById('img').value;
-            const desc = document.getElementById('desc').value;
+            const techStack = document.getElementById('techStack').value || '';
+            const previewLink = document.getElementById('previewLink').value || '';
+            const detailsLink = document.getElementById('detailsLink').value || '';
+            const desc = document.getElementById('desc').value || '';
+
+            if (!title || !img) {
+                alert('❌ Please provide at least a title and image URL');
+                return;
+            }
 
             try {
-                await addDoc(collection(db, 'projects'), { title, img, desc });
-                alert('✅ Project added!');
+                if (editId) {
+                    // update existing
+                    await setDoc(doc(db, 'projects', editId), { title, category, img, techStack, previewLink, detailsLink, desc, updatedAt: new Date() }, { merge: true });
+                    alert('✅ Project updated!');
+                    // clear edit state
+                    delete form.dataset.editId;
+                    document.getElementById('projectSubmitText').textContent = 'Add Project';
+                    document.getElementById('cancelEditBtn').classList.add('hidden');
+                } else {
+                    await addDoc(collection(db, 'projects'), { title, category, img, techStack, previewLink, detailsLink, desc, createdAt: new Date() });
+                    alert('✅ Project added!');
+                }
+
                 loadProjects();
-                e.target.reset();
+                form.reset();
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
         });
+
+        // Cancel edit
+        document.getElementById('cancelEditBtn').addEventListener('click', (e) => {
+            const form = document.getElementById('addProjectForm');
+            delete form.dataset.editId;
+            form.reset();
+            document.getElementById('projectSubmitText').textContent = 'Add Project';
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        });
+
+        // Edit project helper
+        window.editProject = async (id) => {
+            try {
+                const snap = await getDoc(doc(db, 'projects', id));
+                if (!snap.exists()) return alert('Project not found');
+                const data = snap.data();
+                const form = document.getElementById('addProjectForm');
+                form.dataset.editId = id;
+                document.getElementById('title').value = data.title || '';
+                if (document.getElementById('category')) document.getElementById('category').value = data.category || 'other';
+                document.getElementById('img').value = data.img || '';
+                document.getElementById('techStack').value = data.techStack || '';
+                document.getElementById('previewLink').value = data.previewLink || '';
+                document.getElementById('detailsLink').value = data.detailsLink || '';
+                document.getElementById('desc').value = data.desc || '';
+                document.getElementById('projectSubmitText').textContent = 'Update Project';
+                document.getElementById('cancelEditBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error editing project:', error);
+            }
+        };
 
         async function loadProjects() {
             try {
@@ -852,16 +921,29 @@
 
                 snapshot.forEach((doc) => {
                     const data = doc.data();
+                    const techTags = (data.techStack || '').split(',').map(t => t.trim()).filter(Boolean);
+                    const categoryLabel = data.category ? `<span class="inline-block bg-gray-700 text-xs text-gray-200 px-2 py-1 rounded ml-2">${data.category}</span>` : '';
                     list.innerHTML += `
-                        <div class="flex justify-between items-center p-6 bg-gray-800/50 rounded-2xl group hover:bg-gray-700/50">
-                            <div>
-                                <h3 class="font-bold text-xl">${data.title}</h3>
-                                <img src="${data.img}" class="w-24 h-16 object-cover rounded-lg mt-2">
-                                <p class="text-gray-300 mt-2">${data.desc.substring(0, 100)}...</p>
+                        <div class="p-6 bg-gray-800/50 rounded-2xl group hover:bg-gray-700/50">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-xl text-cyan-300">${data.title}${categoryLabel}</h3>
+                                    <div class="text-gray-400 text-sm mt-2">${(data.desc || '').substring(0, 180)}${(data.desc || '').length>180? '...':''}</div>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        ${techTags.map(tag => `<span class="bg-gray-700 text-xs text-gray-200 px-2 py-1 rounded">${tag}</span>`).join('')}
+                                    </div>
+                                    <div class="mt-3 flex gap-3">
+                                        ${data.previewLink ? `<a href="${data.previewLink}" target="_blank" class="text-cyan-400 hover:underline">view</a>` : ''}
+                                        ${data.detailsLink ? `<a href="${data.detailsLink}" target="_blank" class="text-gray-300 hover:underline">details</a>` : ''}
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end ml-4 gap-3">
+                                    <div class="flex gap-2">
+                                        <button onclick="editProject('${doc.id}')" class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded">Edit</button>
+                                        <button onclick="deleteProject('${doc.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+                                    </div>
+                                </div>
                             </div>
-                            <button onclick="deleteProject('${doc.id}')" class="bg-red-500 hover:bg-red-600 p-3 rounded-xl text-white font-bold group-hover:scale-110">
-                                <i class="fas fa-trash"></i>
-                            </button>
                         </div>
                     `;
                 });

@@ -678,22 +678,41 @@
         // Load projects from Firestore 'projects' collection
         async function loadProjects() {
             try {
-                const querySnapshot = await getDocs(collection(db, 'projects'));
+                const querySnapshot = await getDocs(query(collection(db, 'projects'), orderBy('createdAt')));
                 const grid = document.getElementById('projectsGrid');
                 grid.innerHTML = ''; // Clear loading state
 
                 if (querySnapshot.empty) {
-                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">Add projects in Firestore console → Collections → "projects"</div>';
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">No projects yet — add some from the admin dashboard.</div>';
                     return;
                 }
 
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
+                    const techTags = (data.techStack || '').split(',').map(t => t.trim()).filter(Boolean);
+                    const categoryLabel = data.category ? `<span class="inline-block bg-cyan-800 text-xs text-cyan-200 px-2 py-1 rounded ml-2">${data.category}</span>` : '';
+
                     grid.innerHTML += `
-                        <div class="group bg-black/50 backdrop-blur-md rounded-3xl p-6 md:p-8 hover:bg-white/10 transition-all hover:scale-105 cursor-pointer">
-                            <img src="${data.img || 'https://via.placeholder.com/400x200/1a1a3a/00d4ff?text=Project'}" alt="${data.title}" class="w-full h-40 md:h-48 object-cover rounded-2xl mb-6 group-hover:scale-110 transition-transform">
-                            <h3 class="text-lg md:text-2xl font-bold mb-4 text-cyan-400">${data.title}</h3>
-                            <p class="text-sm md:text-base text-gray-300">${data.desc}</p>
+                        <div class="col-span-1 group bg-gradient-to-br from-black/40 to-black/20 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all">
+                            <div class="relative h-56 md:h-64 lg:h-48">
+                                <img src="${data.img || 'https://via.placeholder.com/800x400/1a1a3a/00d4ff?text=Project'}" alt="${data.title}" class="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105">
+                                <div class="absolute left-4 bottom-4 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-2">
+                                    <h3 class="font-bold text-lg text-cyan-300">${data.title}</h3>
+                                    <div class="text-xs text-gray-300 mt-1">${(data.desc||'').substring(0,80)}${(data.desc||'').length>80?'...':''}${categoryLabel}</div>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex flex-wrap gap-2">
+                                    ${techTags.map(t=>`<span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-200">${t}</span>`).join('')}
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div class="flex gap-3">
+                                        ${data.previewLink ? `<a href="${data.previewLink}" target="_blank" class="px-3 py-2 bg-cyan-500 text-black rounded font-semibold">Preview</a>` : ''}
+                                        ${data.detailsLink ? `<a href="${data.detailsLink}" target="_blank" class="px-3 py-2 bg-gray-700 text-gray-100 rounded">Details</a>` : ''}
+                                    </div>
+                                    <a href="#" onclick="return false;" class="text-xs text-gray-400">${data.createdAt ? new Date(data.createdAt.seconds?data.createdAt.seconds*1000:data.createdAt).toLocaleDateString() : ''}</a>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
