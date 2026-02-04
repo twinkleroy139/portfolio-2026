@@ -7,24 +7,67 @@
     <title>Admin Panel - Portfolio 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .section-content { display: none; }
-        .section-content.active { display: block; }
-        .tab-btn.active { 
-            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-            color: black;
-        }
-        .tab-btn:not(.active) { 
-            background-color: #374151;
-        }
-        .tab-btn:not(.active):hover {
-            background-color: #4b5563;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="bg-gradient-to-br from-indigo-950 to-slate-900 min-h-screen text-white p-8">
-    <div class="max-w-7xl mx-auto">
+<body class="bg-gradient-to-br from-indigo-950 to-slate-900 min-h-screen text-white md:p-8 p-0">
+
+
+
+
+<!-- Mobile Nav Overlay -->
+    <div class="nav-overlay" id="navOverlay" onclick="toggleMobileNav()"></div>
+
+    <!-- Responsive Navigation -->
+    <nav id="sideNav" class="fixed left-0 top-0 h-full w-64 bg-black/80 backdrop-blur-md z-50 flex flex-col p-6 md:p-8 transition-transform duration-300 ease-in-out transform -translate-x-full md:translate-x-0 md:fixed overflow-y-auto">
+        
+        <!-- Close Button for Mobile -->
+        <button onclick="toggleMobileNav()" class="md:hidden absolute top-4 right-4 text-gray-400 hover:text-white">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+
+        <!-- Profile Image -->
+        <img id="navProfileImage"
+            src="https://imgs.search.brave.com/ntLd9g5FWU0biphaC1KAVUJuOltomYnVGvsQpcZhCu8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFlL2Rl/L2I3LzFlZGViN2Uw/ZDY5MTFkNTZlNDRk/MjE1YTE4YWRjNjU5/LmpwZw"
+            alt="Profile"
+            class="w-32 h-32 rounded-full object-cover mb-6 border-2 border-cyan-400" />
+        
+        <!-- Profile Name -->
+        <div class="flex items-center mb-12">
+            <h1 id="navProfileName" class="text-2xl font-bold text-cyan-400">Your Name</h1>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ul class="space-y-6 text-lg flex-1">
+            <li><a href="index.html#hero" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-home mr-3"></i>Quest</a></li>
+            <li><a href="index.html#about" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-user mr-3"></i>About</a></li>
+            <li><a href="index.html#education" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-graduation-cap mr-3"></i>Education</a></li>
+            <li><a href="index.html#skills" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-code mr-3"></i>Skills</a></li>
+            <li><a href="index.html#projects" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Projects</a></li>
+            <li><a href="index.html#contact" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-envelope mr-3"></i>Contact</a></li>
+            <li><a href="admin.html" class="flex items-center text-cyan-400 hover:text-white transition-all"><i class="fas fa-cog mr-3"></i>Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <!-- Mobile Top Bar (profile left, menu right) -->
+    <div class="md:hidden sticky top-0 left-0 right-0 z-40 flex items-center justify-between p-3 bg-black/80 backdrop-blur-md border-b border-cyan-400/20">
+        <div class="flex items-center gap-3 ml-1">
+            <img id="mobileProfileImage" src="https://imgs.search.brave.com/ntLd9g5FWU0biphaC1KAVUJuOltomYnVGvsQpcZhCu8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFlL2Rl/L2I3LzFlZGViN2Uw/ZDY5MTFkNTZlNDRk/MjE1YTE4YWRjNjU5/LmpwZw" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-cyan-400">
+            <div class="flex flex-col">
+                <span id="mobileProfileName" class="text-sm font-semibold text-cyan-400">Your Name</span>
+            </div>
+        </div>
+        <button onclick="toggleMobileNav()" class="mr-1 bg-black/0 p-2 rounded-lg text-cyan-400 hover:text-white">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
+    </div>
+
+
+
+
+
+
+    <div class="max-w-7xl mx-auto md:ml-64 md:mr-0">
         <div class="flex justify-between items-center mb-12">
             <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                 <i class="fas fa-cog mr-4"></i>Admin Dashboard
@@ -289,6 +332,26 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, doc, orderBy, query, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+        // Mobile Navigation Toggle
+        function toggleMobileNav() {
+            const sideNav = document.getElementById('sideNav');
+            const navOverlay = document.getElementById('navOverlay');
+            
+            sideNav.classList.toggle('-translate-x-full');
+            navOverlay.classList.toggle('active');
+        }
+
+        // Close mobile menu on window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                document.getElementById('sideNav').classList.remove('-translate-x-full');
+                document.getElementById('navOverlay').classList.remove('active');
+            }
+        });
+
+        // Make toggle available globally
+        window.toggleMobileNav = toggleMobileNav;
+
         const firebaseConfig = {
             apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
             authDomain: "my-portfolio-6d703.firebaseapp.com",
@@ -412,6 +475,12 @@
                     document.getElementById('profileNameInput').value = data.profileName || '';
                     document.getElementById('profileImageInput').value = data.profileImage || '';
                     document.getElementById('profileImagePreview').src = data.profileImage || 'https://via.placeholder.com/200x200';
+                    
+                    // Update nav images
+                    document.getElementById('navProfileImage').src = data.profileImage || 'https://via.placeholder.com/200x200';
+                    document.getElementById('mobileProfileImage').src = data.profileImage || 'https://via.placeholder.com/200x200';
+                    document.getElementById('navProfileName').textContent = data.profileName || 'Your Name';
+                    document.getElementById('mobileProfileName').textContent = data.profileName || 'Your Name';
                 }
             } catch (error) {
                 console.error("Error loading profile:", error);

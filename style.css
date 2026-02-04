@@ -1,56 +1,388 @@
+/* ============================================
+   MODERN PORTFOLIO - PROFESSIONAL 3D DESIGN
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ============================================
+   BACKGROUND & LAYOUT
+   ============================================ */
+
+html {
+    scroll-behavior: smooth;
+}
 
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #121212;
-  color: #f0f0f0;
+    font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+    color: #e0e0e0;
+    overflow-x: hidden;
+    position: relative;
 }
 
-header {
-  background: linear-gradient(to right, #ff6f61, #ff9966);
-  padding: 2rem;
-  text-align: center;
+/* Modern Gradient Background with 3D Depth */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a4d 25%, #0f2860 50%, #1a0a3d 75%, #0a0e27 100%);
+    z-index: -2;
+    animation: gradientShift 15s ease infinite;
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+    z-index: -1;
+    pointer-events: none;
 }
 
-.hero p {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
-.hero a {
-  color: #fff;
-  background: #333;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  border-radius: 5px;
+/* ============================================
+   NAVIGATION OVERLAY
+   ============================================ */
+
+.nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+    transition: all 0.3s ease;
 }
 
-section {
-  padding: 2rem;
-  border-bottom: 1px solid #333;
+.nav-overlay.active {
+    display: block;
 }
 
-section h2 {
-  color: #ff9966;
-  margin-bottom: 1rem;
+/* ============================================
+   CAROUSEL - 3D PORTRAIT MODE (9:16)
+   ============================================ */
+
+.carousel-container {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    max-height: 600px;
+    background: linear-gradient(135deg, rgba(20, 20, 60, 0.5) 0%, rgba(40, 20, 80, 0.5) 100%);
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 
+        0 0 60px rgba(0, 212, 255, 0.3),
+        0 0 120px rgba(147, 51, 234, 0.2),
+        inset 0 0 40px rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.2);
 }
 
-ul li {
-  margin-bottom: 0.5rem;
+.carousel {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: #1e1e1e;
+.carousel-item {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    transform-origin: center;
+    opacity: 0;
+    transition: all 0.6s ease-in-out;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Active item with enhanced glow */
+.carousel-item.active {
+    opacity: 1;
+    transform: translateZ(0) rotateY(0deg) scale(1);
+    z-index: 10;
+    box-shadow: 
+        0 0 40px rgba(0, 212, 255, 0.8),
+        0 0 80px rgba(0, 212, 255, 0.5),
+        0 0 120px rgba(147, 51, 234, 0.3),
+        inset 0 0 30px rgba(0, 212, 255, 0.15);
+}
+
+.carousel-item.prev {
+    opacity: 0.3;
+    transform: translateX(-55%) translateZ(-250px) rotateY(40deg) scale(0.7);
+    z-index: 5;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+}
+
+.carousel-item.next {
+    opacity: 0.3;
+    transform: translateX(55%) translateZ(-250px) rotateY(-40deg) scale(0.7);
+    z-index: 5;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Carousel Controls */
+.carousel-controls {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.carousel-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+    color: #000;
+    border: 2px solid rgba(0, 212, 255, 0.4);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 
+        0 8px 25px rgba(0, 212, 255, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.carousel-btn:hover {
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 
+        0 12px 35px rgba(0, 212, 255, 0.7),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    background: linear-gradient(135deg, #00e8ff 0%, #00b3ff 100%);
+}
+
+.carousel-btn:active {
+    transform: scale(0.95);
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 90%;
+}
+
+.carousel-indicator {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: rgba(0, 212, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid rgba(0, 212, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+}
+
+.carousel-indicator.active {
+    background-color: #00d4ff;
+    transform: scale(1.5);
+    box-shadow: 
+        0 0 20px rgba(0, 212, 255, 0.8),
+        0 0 40px rgba(0, 212, 255, 0.4);
+    border-color: #00d4ff;
+}
+
+.carousel-indicator:hover {
+    background-color: rgba(0, 212, 255, 0.6);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+}
+
+/* ============================================
+   ADMIN PANEL STYLES
+   ============================================ */
+
+.section-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.section-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-btn {
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+    color: #000;
+    box-shadow: 
+        0 0 20px rgba(0, 212, 255, 0.5),
+        0 0 40px rgba(0, 212, 255, 0.3);
+    border-color: rgba(0, 212, 255, 0.3);
+    font-weight: 600;
+}
+
+.tab-btn:not(.active) {
+    background-color: rgba(55, 65, 81, 0.6);
+    color: #e0e0e0;
+    border-color: rgba(0, 212, 255, 0.1);
+}
+
+.tab-btn:not(.active):hover {
+    background-color: rgba(75, 85, 99, 0.8);
+    border-color: rgba(0, 212, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .carousel-container {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+
+    .carousel-wrapper {
+        max-height: 500px;
+        border-radius: 25px;
+    }
+
+    .carousel-item {
+        border-radius: 25px;
+    }
+
+    .carousel-item.prev {
+        transform: translateX(-50%) translateZ(-150px) rotateY(35deg) scale(0.65);
+    }
+
+    .carousel-item.next {
+        transform: translateX(50%) translateZ(-150px) rotateY(-35deg) scale(0.65);
+    }
+
+    .carousel-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
+    }
+
+    .carousel-controls {
+        top: 15px;
+        padding: 0 15px;
+    }
+
+    main {
+        margin-left: 0 !important;
+        padding: 20px !important;
+    }
+
+    body {
+        padding: 0 !important;
+    }
+
+    .max-w-7xl {
+        margin-left: 0 !important;
+        padding: 20px !important;
+        padding-top: 80px !important;
+    }
+}
+
+/* ============================================
+   UTILITY & HELPER CLASSES
+   ============================================ */
+
+.glass-effect {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #00d4ff, #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glow-effect {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+}
+
+.smooth-transition {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 212, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #00d4ff 0%, #9333ea 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #00e8ff 0%, #a855f7 100%);
 }
