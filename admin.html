@@ -35,6 +35,7 @@
 
         <!-- Navigation Tabs -->
         <div class="flex gap-2 mb-8 flex-wrap">
+            <button onclick="switchSection('profile')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-id-card mr-2"></i>Profile</button>
             <button onclick="switchSection('hero')" class="tab-btn active px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-image mr-2"></i>Hero</button>
             <button onclick="switchSection('about')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-user mr-2"></i>About</button>
             <button onclick="switchSection('education')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-graduation-cap mr-2"></i>Education</button>
@@ -42,6 +43,34 @@
             <button onclick="switchSection('projects')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Projects</button>
             <button onclick="switchSection('messages')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-envelope mr-2"></i>Messages <span id="messageCount" class="bg-red-500 px-2 py-1 rounded ml-2 text-xs">0</span></button>
             <button onclick="switchSection('contact')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-phone mr-2"></i>Contact Info</button>
+        </div>
+
+        <!-- ===== PROFILE SECTION ===== -->
+        <div id="section-profile" class="section-content">
+            <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-id-card mr-2"></i>Edit Profile</h2>
+                <form id="editProfileForm" class="space-y-6">
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Profile Name</label>
+                        <input type="text" id="profileNameInput" placeholder="Your Name"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Profile Image URL</label>
+                        <input type="url" id="profileImageInput" placeholder="https://example.com/image.jpg"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <p class="text-gray-400 text-xs mt-2">This image will appear in the navigation sidebar and about section</p>
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Preview</label>
+                        <img id="profileImagePreview" src="https://via.placeholder.com/200x200" alt="Preview" class="w-48 h-48 rounded-xl object-cover border-2 border-cyan-400">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                        <i class="fas fa-save mr-2"></i>Save Profile
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- ===== MESSAGES SECTION ===== -->
@@ -350,6 +379,49 @@
                 loadMessages();
             }
         };
+
+        // ===== PROFILE MANAGEMENT =====
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const profileData = {
+                    profileName: document.getElementById('profileNameInput').value,
+                    profileImage: document.getElementById('profileImageInput').value,
+                    updatedAt: new Date()
+                };
+                
+                if (!profileData.profileName || !profileData.profileImage) {
+                    alert('❌ Please fill in all fields');
+                    return;
+                }
+
+                await setDoc(doc(db, 'profile', 'main'), profileData);
+                alert('✅ Profile updated! Refresh the portfolio page to see changes.');
+                loadProfileForm();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        async function loadProfileForm() {
+            try {
+                const profileRef = doc(db, 'profile', 'main');
+                const snap = await getDoc(profileRef);
+                if (snap && snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('profileNameInput').value = data.profileName || '';
+                    document.getElementById('profileImageInput').value = data.profileImage || '';
+                    document.getElementById('profileImagePreview').src = data.profileImage || 'https://via.placeholder.com/200x200';
+                }
+            } catch (error) {
+                console.error("Error loading profile:", error);
+            }
+        }
+
+        // Live preview for profile image
+        document.getElementById('profileImageInput').addEventListener('change', function() {
+            document.getElementById('profileImagePreview').src = this.value || 'https://via.placeholder.com/200x200';
+        });
 
         // ===== CONTACT INFO =====
         document.getElementById('editContactForm').addEventListener('submit', async (e) => {
@@ -677,6 +749,7 @@
         };
 
         // Initialize all sections
+        loadProfileForm();
         loadHeroImages();
         loadAboutForm();
         loadEducationForm();
