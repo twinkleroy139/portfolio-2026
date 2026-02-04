@@ -374,7 +374,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, doc, orderBy, query, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, doc, orderBy, query, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         // Mobile Navigation Toggle
         function toggleMobileNav() {
@@ -862,14 +862,14 @@
             try {
                 if (editId) {
                     // update existing
-                    await setDoc(doc(db, 'projects', editId), { title, category, img, techStack, previewLink, detailsLink, desc, updatedAt: new Date() }, { merge: true });
+                    await setDoc(doc(db, 'projects', editId), { title, category, img, techStack, previewLink, detailsLink, desc, updatedAt: serverTimestamp() }, { merge: true });
                     alert('✅ Project updated!');
                     // clear edit state
                     delete form.dataset.editId;
                     document.getElementById('projectSubmitText').textContent = 'Add Project';
                     document.getElementById('cancelEditBtn').classList.add('hidden');
                 } else {
-                    await addDoc(collection(db, 'projects'), { title, category, img, techStack, previewLink, detailsLink, desc, createdAt: new Date() });
+                    await addDoc(collection(db, 'projects'), { title, category, img, techStack, previewLink, detailsLink, desc, createdAt: serverTimestamp() });
                     alert('✅ Project added!');
                 }
 
