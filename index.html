@@ -33,104 +33,90 @@
         
         <!-- Close Button for Mobile -->
         <button onclick="toggleMobileNav()" class="md:hidden absolute top-4 right-4 text-gray-400 hover:text-white">
-            <i class="fas fa-times text-2xl"></i>
-        </button>
+            async function loadProjects() {
+                const grid = document.getElementById('projectsGrid');
+                grid.innerHTML = ''; // Clear loading state
+                const debugEl = document.getElementById('projectsDebug');
+                if (debugEl) debugEl.textContent = 'Loading projects...';
 
-        <!-- Profile Image -->
-        <img id="navProfileImage"
-            src="https://imgs.search.brave.com/ntLd9g5FWU0biphaC1KAVUJuOltomYnVGvsQpcZhCu8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFlL2Rl/L2I3LzFlZGViN2Uw/ZDY5MTFkNTZlNDRk/MjE1YTE4YWRjNjU5/LmpwZw"
-            alt="Profile"
-            class="w-32 h-32 rounded-full object-cover mb-6 border-2 border-cyan-400" />
-        
-        <!-- Profile Name -->
-        <div class="flex items-center mb-6">
-            <h1 id="navProfileName" class="text-2xl font-bold text-cyan-400">Your Name</h1>
-        </div>
+                const renderSnapshot = (querySnapshot) => {
+                    if (!querySnapshot || querySnapshot.empty) return false;
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const techTags = (data.techStack || '').split(',').map(t => t.trim()).filter(Boolean);
+                        const categoryLabel = data.category ? `<span class="inline-block bg-cyan-800 text-xs text-cyan-200 px-2 py-1 rounded ml-2">${data.category}</span>` : '';
 
-        <!-- Social Media Icons -->
-        <div class="flex gap-2 mb-10 justify-center" id="navSocialIcons">
-            <a href="#" id="nav-github" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="GitHub">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="#" id="nav-linkedin" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="LinkedIn">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="#" id="nav-twitter" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="Twitter">
-                <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#" id="nav-instagram" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="Instagram">
-                <i class="fab fa-instagram"></i>
-            </a>
-        </div>
+                        // choose a timestamp for display
+                        const ts = data.createdAt || data.updatedAt || null;
+                        let dateStr = '';
+                        if (ts) {
+                            try {
+                                dateStr = new Date(ts.seconds ? ts.seconds * 1000 : ts).toLocaleDateString();
+                            } catch (e) {
+                                dateStr = String(ts);
+                            }
+                        }
 
-        <!-- Navigation Menu -->
-        <ul class="space-y-6 text-lg flex-1">
-            <li><a href="#hero" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-home mr-3"></i>Quest</a></li>
-            <li><a href="#about" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-user mr-3"></i>About</a></li>
-            <li><a href="#education" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-graduation-cap mr-3"></i>Education</a></li>
-            <li><a href="#skills" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-code mr-3"></i>Skills</a></li>
-            <li><a href="#projects" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Projects</a></li>
-            <li><a href="#contact" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-envelope mr-3"></i>Contact</a></li>
-            <li><a href="admin.html" class="flex items-center text-red-400 hover:text-white transition-all"><i class="fas fa-cog mr-3"></i>Admin</a></li>
-        </ul>
-    </nav>
+                        grid.innerHTML += `
+                            <div class="col-span-1 group bg-gradient-to-br from-black/40 to-black/20 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all">
+                                <div class="relative h-56 md:h-64 lg:h-48">
+                                    <img src="${data.img || 'https://via.placeholder.com/800x400/1a1a3a/00d4ff?text=Project'}" alt="${data.title}" class="absolute inset-0 w-full h-full object-cover transition-transform group-hover:scale-105">
+                                    <div class="absolute left-4 bottom-4 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-2">
+                                        <h3 class="font-bold text-lg text-cyan-300">${data.title}</h3>
+                                        <div class="text-xs text-gray-300 mt-1">${(data.desc||'').substring(0,80)}${(data.desc||'').length>80?'...':''}${categoryLabel}</div>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <div class="flex flex-wrap gap-2">
+                                        ${techTags.map(t=>`<span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-200">${t}</span>`).join('')}
+                                    </div>
+                                    <div class="mt-4 flex items-center justify-between">
+                                        <div class="flex gap-3">
+                                            ${data.previewLink ? `<a href="${data.previewLink}" target="_blank" class="px-3 py-2 bg-cyan-500 text-black rounded font-semibold">Preview</a>` : ''}
+                                            ${data.detailsLink ? `<a href="${data.detailsLink}" target="_blank" class="px-3 py-2 bg-gray-700 text-gray-100 rounded">Details</a>` : ''}
+                                        </div>
+                                        <a href="#" onclick="return false;" class="text-xs text-gray-400">${dateStr}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    return true;
+                };
 
-    <!-- Mobile Top Bar (profile left, menu right) -->
-    <div class="md:hidden sticky top-0 left-0 right-0 z-40 flex items-center justify-between p-3 bg-black/80 backdrop-blur-md border-b border-cyan-400/20">
-        <div class="flex items-center gap-3 ml-1">
-            <img id="mobileProfileImage" src="https://imgs.search.brave.com/ntLd9g5FWU0biphaC1KAVUJuOltomYnVGvsQpcZhCu8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFlL2Rl/L2I3LzFlZGViN2Uw/ZDY5MTFkNTZlNDRk/MjE1YTE4YWRjNjU5/LmpwZw" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-cyan-400">
-            <div class="flex flex-col">
-                <span id="mobileProfileName" class="text-sm font-semibold text-cyan-400">Your Name</span>
-            </div>
-        </div>
-        <button onclick="toggleMobileNav()" class="mr-1 bg-black/0 p-2 rounded-lg text-cyan-400 hover:text-white">
-            <i class="fas fa-bars text-2xl"></i>
-        </button>
-    </div>
+                // Try ordering by createdAt then updatedAt, then fallback to unordered read
+                try {
+                    let qSnap = await getDocs(query(collection(db, 'projects'), orderBy('createdAt', 'desc')));
+                    if (debugEl) debugEl.textContent = 'Primary query (createdAt) snapshot size: ' + qSnap.size;
+                    if (renderSnapshot(qSnap)) return;
+                } catch (err) {
+                    console.warn('Primary orderBy(createdAt) failed:', err);
+                    if (debugEl) debugEl.textContent = 'Primary query error: ' + (err && err.message ? err.message : String(err));
+                }
 
-    <!-- Main Content -->
-    <main class="md:ml-64 pt-16 md:pt-0 p-6 md:p-12"> 
-        <!-- Hero -->
-        <!-- <section id="hero" class="min-h-screen flex items-center justify-center text-center">
-            <div>
-                <h1
-                    class="text-6xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-8">
-                    Portfolio 2026
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto">
-                    Affiliate Marketer | Tech Content Creator | PC Builder
-                </p>
-            </div>
-        </section> -->
-        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center relative py-8 md:py-0 pb-20 md:pb-24">
+                try {
+                    const qSnap2 = await getDocs(query(collection(db, 'projects'), orderBy('updatedAt', 'desc')));
+                    if (debugEl) debugEl.textContent = 'Secondary query (updatedAt) snapshot size: ' + qSnap2.size;
+                    if (renderSnapshot(qSnap2)) return;
+                } catch (err) {
+                    console.warn('Secondary orderBy(updatedAt) failed:', err);
+                    if (debugEl) debugEl.textContent = 'Secondary query error: ' + (err && err.message ? err.message : String(err));
+                }
 
-            <!-- Carousel Slider -->
-            <div class="carousel-container">
-                <div class="carousel-wrapper">
-                    <div id="carouselSlider" class="carousel">
-                        <!-- Carousel items load from Firebase -->
-                    </div>
-                </div>
-                <!-- Carousel Controls -->
-                <div class="carousel-controls">
-                    <button onclick="prevCarousel()" class="carousel-btn">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button onclick="nextCarousel()" class="carousel-btn">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                <!-- Carousel Indicators -->
-                <div class="carousel-indicators" id="carouselIndicators">
-                    <!-- Indicators load from Firebase -->
-                </div>
-            </div>
-
-            <!-- Hero Text -->
-            <div class="mb-8 px-4 mt-16 md:mt-12">
-                <h1
-                    class="text-4xl sm:text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
-                    Twinkle Roy Portfolio 2026
+                // Final fallback: unordered read
+                try {
+                    const fallbackSnap = await getDocs(collection(db, 'projects'));
+                    if (debugEl) debugEl.textContent = 'Fallback unordered snapshot size: ' + fallbackSnap.size;
+                    if (!renderSnapshot(fallbackSnap)) {
+                        if (debugEl) debugEl.textContent = 'No projects found';
+                        grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">No projects yet — add some from the admin dashboard.</div>';
+                    }
+                } catch (error) {
+                    console.error("Firestore Error (fallback):", error);
+                    if (debugEl) debugEl.textContent = 'Firestore error: ' + (error && error.message ? error.message : String(error));
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-red-400">Firestore Error - Check console (F12)</div>';
+                }
+            }
                 </h1>
                 <p class="text-base sm:text-lg md:text-2xl text-gray-300 max-w-2xl mx-auto">
                     Affiliate Marketer | Tech Content Creator | PC Builder
@@ -407,6 +393,7 @@
         <section id="projects" class="py-12 md:py-32 px-4 md:px-0">
             <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-20 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                 Projects</h2>
+            <div id="projectsDebug" class="max-w-6xl mx-auto text-center text-xs text-gray-400 mb-4">Debug: waiting</div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 max-w-6xl mx-auto" id="projectsGrid">
                 <!-- Firestore loads here -->
             </div>
@@ -721,13 +708,17 @@
             const grid = document.getElementById('projectsGrid');
             if (!grid) return; // Safely exit if grid element not found
             grid.innerHTML = ''; // Clear loading state
+            const debugEl = document.getElementById('projectsDebug');
+            if (debugEl) debugEl.textContent = 'Loading projects...';
             try {
                 // Primary: order by createdAt (most reliable when present)
                 const querySnapshot = await getDocs(query(collection(db, 'projects'), orderBy('createdAt')));
                 console.debug('loadProjects primary snapshot size:', querySnapshot.size);
+                if (debugEl) debugEl.textContent = 'Primary query snapshot size: ' + querySnapshot.size;
 
                 if (querySnapshot.empty) {
                     console.debug('loadProjects primary empty, falling back soon');
+                    if (debugEl) debugEl.textContent = 'Primary query empty — no projects found';
                     grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">No projects yet — add some from the admin dashboard.</div>';
                     return;
                 }
@@ -765,13 +756,16 @@
                 return;
             } catch (error) {
                 console.warn('Order by createdAt failed or returned error, falling back to simple collection read.', error);
+                if (debugEl) debugEl.textContent = 'Primary query error: ' + (error && error.message ? error.message : String(error));
             }
 
             // Fallback: read without ordering (handles older docs without createdAt)
             try {
                 const querySnapshot = await getDocs(collection(db, 'projects'));
+                if (debugEl) debugEl.textContent = 'Fallback query snapshot size: ' + querySnapshot.size;
 
                 if (querySnapshot.empty) {
+                    if (debugEl) debugEl.textContent = 'Fallback query empty — no projects found';
                     grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">No projects yet — add some from the admin dashboard.</div>';
                     return;
                 }

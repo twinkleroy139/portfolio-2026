@@ -869,7 +869,7 @@
                     document.getElementById('projectSubmitText').textContent = 'Add Project';
                     document.getElementById('cancelEditBtn').classList.add('hidden');
                 } else {
-                    await addDoc(collection(db, 'projects'), { title, category, img, techStack, previewLink, detailsLink, desc, createdAt: serverTimestamp() });
+                    await addDoc(collection(db, 'projects'), { title, category, img, techStack, previewLink, detailsLink, desc, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
                     alert('✅ Project added!');
                 }
 
