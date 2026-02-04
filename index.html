@@ -31,8 +31,24 @@
             class="w-32 h-32 rounded-full object-cover mb-6 border-2 border-cyan-400" />
         
         <!-- Profile Name -->
-        <div class="flex items-center mb-12">
+        <div class="flex items-center mb-6">
             <h1 id="navProfileName" class="text-2xl font-bold text-cyan-400">Your Name</h1>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="flex gap-2 mb-10 justify-center" id="navSocialIcons">
+            <a href="#" id="nav-github" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="#" id="nav-linkedin" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="#" id="nav-twitter" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" id="nav-instagram" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
         </div>
 
         <!-- Navigation Menu -->
@@ -74,7 +90,7 @@
                 </p>
             </div>
         </section> -->
-        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center relative py-8 md:py-0 pb-48 md:pb-40">
+        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center relative py-8 md:py-0 pb-20 md:pb-24">
 
             <!-- Carousel Slider -->
             <div class="carousel-container">
@@ -99,7 +115,7 @@
             </div>
 
             <!-- Hero Text -->
-            <div class="mb-8 px-4 mt-32 md:mt-24">
+            <div class="mb-8 px-4 mt-16 md:mt-12">
                 <h1
                     class="text-4xl sm:text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
                     Twinkle Roy Portfolio 2026
@@ -471,6 +487,95 @@
                 </div>
             </div>
         </section>
+
+        <!-- Modern Footer -->
+        <footer class="bg-black/60 backdrop-blur-md border-t border-cyan-400/20 mt-12 md:mt-24">
+            <div class="max-w-6xl mx-auto px-4 md:px-12 py-12 md:py-16">
+                <!-- Footer Content -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
+                    <!-- About Section -->
+                    <div class="md:col-span-1">
+                        <h3 class="text-lg md:text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                            <i class="fas fa-user-circle"></i> About
+                        </h3>
+                        <p class="text-sm md:text-base text-gray-300 leading-relaxed">
+                            I'm <span class="text-cyan-400 font-semibold">Twinkle Roy</span>, a passionate developer and creator crafting digital experiences with precision and innovation.
+                        </p>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="md:col-span-1">
+                        <h3 class="text-lg md:text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                            <i class="fas fa-link"></i> Quick Links
+                        </h3>
+                        <ul class="space-y-2 text-sm md:text-base text-gray-300">
+                            <li><a href="#hero" class="hover:text-cyan-400 transition-colors"><i class="fas fa-arrow-right mr-2 text-cyan-400"></i>Home</a></li>
+                            <li><a href="#about" class="hover:text-cyan-400 transition-colors"><i class="fas fa-arrow-right mr-2 text-cyan-400"></i>About Me</a></li>
+                            <li><a href="#projects" class="hover:text-cyan-400 transition-colors"><i class="fas fa-arrow-right mr-2 text-cyan-400"></i>Projects</a></li>
+                            <li><a href="#contact" class="hover:text-cyan-400 transition-colors"><i class="fas fa-arrow-right mr-2 text-cyan-400"></i>Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Services -->
+                    <div class="md:col-span-1">
+                        <h3 class="text-lg md:text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                            <i class="fas fa-briefcase"></i> Services
+                        </h3>
+                        <ul class="space-y-2 text-sm md:text-base text-gray-300">
+                            <li><span class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i>Web Development</span></li>
+                            <li><span class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i>UI/UX Design</span></li>
+                            <li><span class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i>Full Stack Solutions</span></li>
+                            <li><span class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i>Consulting</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Connect -->
+                    <div class="md:col-span-1">
+                        <h3 class="text-lg md:text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+                            <i class="fas fa-share-alt"></i> Connect
+                        </h3>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="https://github.com" id="footer-github" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110" title="GitHub">
+                                <i class="fab fa-github text-lg"></i>
+                            </a>
+                            <a href="https://linkedin.com" id="footer-linkedin" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110" title="LinkedIn">
+                                <i class="fab fa-linkedin text-lg"></i>
+                            </a>
+                            <a href="https://twitter.com" id="footer-twitter" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110" title="Twitter">
+                                <i class="fab fa-twitter text-lg"></i>
+                            </a>
+                            <a href="https://instagram.com" id="footer-instagram" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110" title="Instagram">
+                                <i class="fab fa-instagram text-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-cyan-400/20 my-8"></div>
+
+                <!-- Footer Bottom -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-xs md:text-sm text-gray-400">
+                    <p class="text-center md:text-left">
+                        <i class="fas fa-code text-cyan-400 mr-2"></i>Crafted with passion by <span class="text-cyan-400 font-semibold">Twinkle Roy</span> | Portfolio 2026
+                    </p>
+                    <p class="text-center md:text-right">
+                        <i class="fas fa-globe text-cyan-400 mr-2"></i>Powered by Modern Web Technologies
+                    </p>
+                </div>
+
+                <!-- Copyright & Legal -->
+                <div class="mt-6 pt-6 border-t border-cyan-400/10 text-center">
+                    <p class="text-xs text-gray-500">
+                        <span>&copy; 2026 Twinkle Roy. All rights reserved.</span>
+                        <span class="mx-2">•</span>
+                        <a href="#" class="hover:text-cyan-400 transition-colors">Privacy Policy</a>
+                        <span class="mx-2">•</span>
+                        <a href="#" class="hover:text-cyan-400 transition-colors">Terms of Service</a>
+                    </p>
+                </div>
+            </div>
+        </footer>
     </main>
 
     <!-- JavaScript Functions -->
@@ -537,6 +642,33 @@
 
         // Load nav profile first
         loadNavProfile();
+
+        // Load social media links from Firestore
+        async function loadSocialLinks() {
+            try {
+                const socialRef = doc(db, 'social', 'links');
+                const snap = await getDoc(socialRef);
+                if (snap && snap.exists()) {
+                    const data = snap.data();
+                    
+                    // Update nav social icons
+                    if (data.github) document.getElementById('nav-github').href = data.github;
+                    if (data.linkedin) document.getElementById('nav-linkedin').href = data.linkedin;
+                    if (data.twitter) document.getElementById('nav-twitter').href = data.twitter;
+                    if (data.instagram) document.getElementById('nav-instagram').href = data.instagram;
+                    
+                    // Update footer social icons
+                    if (data.github) document.getElementById('footer-github').href = data.github;
+                    if (data.linkedin) document.getElementById('footer-linkedin').href = data.linkedin;
+                    if (data.twitter) document.getElementById('footer-twitter').href = data.twitter;
+                    if (data.instagram) document.getElementById('footer-instagram').href = data.instagram;
+                }
+            } catch (error) {
+                console.error("Error loading social links:", error);
+            }
+        }
+
+        loadSocialLinks();
 
         // Load hero images with carousel
         if (window.loadHeroImagesFromCarousel) {

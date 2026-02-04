@@ -386,3 +386,97 @@ body::after {
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #00e8ff 0%, #a855f7 100%);
 }
+/* ============================================
+   MODERN FOOTER STYLING
+   ============================================ */
+
+footer {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Footer Background Glow */
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(0, 212, 255, 0.05) 0%, 
+        rgba(147, 51, 234, 0.03) 50%, 
+        rgba(0, 212, 255, 0.05) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+footer > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Footer Links Animation */
+footer a {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+footer a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, #00d4ff, #9333ea);
+    transition: width 0.3s ease;
+}
+
+footer a:hover::after {
+    width: 100%;
+}
+
+/* Social Icons Hover Effect */
+footer .w-12.h-12 {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+}
+
+footer .w-12.h-12:hover {
+    box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+    transform: translateY(-3px) scale(1.1);
+}
+
+/* Footer Section Headers */
+footer h3 {
+    position: relative;
+    display: inline-block;
+}
+
+footer h3::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: -8px;
+    left: 0;
+    background: linear-gradient(90deg, #00d4ff, #9333ea);
+    transition: width 0.3s ease;
+}
+
+footer h3:hover::after {
+    width: 100%;
+}
+
+/* Responsive Footer Adjustments */
+@media (max-width: 768px) {
+    footer .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    footer > div > p {
+        font-size: 0.75rem;
+    }
+}

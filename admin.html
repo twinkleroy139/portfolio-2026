@@ -113,6 +113,35 @@
                         <i class="fas fa-save mr-2"></i>Save Profile
                     </button>
                 </form>
+
+                <!-- Social Media Links Section -->
+                <h3 class="text-xl font-bold text-cyan-400 mt-8 mb-4"><i class="fas fa-share-alt mr-2"></i>Social Media Links</h3>
+                <form id="editSocialForm" class="space-y-4">
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">GitHub URL</label>
+                        <input type="url" id="socialGithuburlInput" placeholder="https://github.com/username"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">LinkedIn URL</label>
+                        <input type="url" id="socialLinkedInUrlInput" placeholder="https://linkedin.com/in/username"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Twitter URL</label>
+                        <input type="url" id="socialTwitterUrlInput" placeholder="https://twitter.com/username"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-cyan-400 font-semibold mb-2">Instagram URL</label>
+                        <input type="url" id="socialInstagramUrlInput" placeholder="https://instagram.com/username"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 p-4 rounded-xl text-xl font-bold">
+                        <i class="fas fa-save mr-2"></i>Save Social Links
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -492,6 +521,44 @@
             document.getElementById('profileImagePreview').src = this.value || 'https://via.placeholder.com/200x200';
         });
 
+        // ===== SOCIAL MEDIA FORM =====
+        document.getElementById('editSocialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const socialData = {
+                    github: document.getElementById('socialGithuburlInput').value,
+                    linkedin: document.getElementById('socialLinkedInUrlInput').value,
+                    twitter: document.getElementById('socialTwitterUrlInput').value,
+                    instagram: document.getElementById('socialInstagramUrlInput').value,
+                    updatedAt: new Date()
+                };
+                
+                await setDoc(doc(db, 'social', 'links'), socialData);
+                alert('✅ Social media links updated!');
+                loadSocialLinks();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        async function loadSocialLinks() {
+            try {
+                const socialRef = doc(db, 'social', 'links');
+                const snap = await getDoc(socialRef);
+                if (snap && snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('socialGithuburlInput').value = data.github || '';
+                    document.getElementById('socialLinkedInUrlInput').value = data.linkedin || '';
+                    document.getElementById('socialTwitterUrlInput').value = data.twitter || '';
+                    document.getElementById('socialInstagramUrlInput').value = data.instagram || '';
+                }
+            } catch (error) {
+                console.error("Error loading social links:", error);
+            }
+        }
+            document.getElementById('profileImagePreview').src = this.value || 'https://via.placeholder.com/200x200';
+        });
+
         // ===== CONTACT INFO =====
         document.getElementById('editContactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -819,6 +886,7 @@
 
         // Initialize all sections
         loadProfileForm();
+        loadSocialLinks();
         loadHeroImages();
         loadAboutForm();
         loadEducationForm();
