@@ -1150,6 +1150,8 @@
                 const q = query(collection(db, 'blogPosts'), orderBy('publishDate', 'desc'));
                 const snapshot = await getDocs(q);
 
+                console.log('📝 Blog posts found:', snapshot.size);
+
                 if (snapshot.empty) {
                     blogGrid.innerHTML = '<div class="col-span-full text-center text-gray-400"><i class="fas fa-inbox text-4xl mb-4 block"></i>No blog posts yet.</div>';
                     return;
@@ -1158,10 +1160,27 @@
                 blogGrid.innerHTML = '';
                 snapshot.forEach(doc => {
                     const blog = doc.data();
+                    console.log('📄 Blog post:', blog.title, blog);
+                    
                     const blogCard = document.createElement('div');
                     blogCard.className = 'blog-card';
                     
-                    const publishDate = blog.publishDate?.toDate ? blog.publishDate.toDate() : new Date(blog.publishDate);
+                    // Handle date conversion
+                    let publishDate;
+                    if (blog.publishDate) {
+                        if (blog.publishDate.toDate && typeof blog.publishDate.toDate === 'function') {
+                            publishDate = blog.publishDate.toDate();
+                        } else if (blog.publishDate instanceof Date) {
+                            publishDate = blog.publishDate;
+                        } else if (typeof blog.publishDate === 'string') {
+                            publishDate = new Date(blog.publishDate);
+                        } else {
+                            publishDate = new Date();
+                        }
+                    } else {
+                        publishDate = new Date();
+                    }
+                    
                     const formattedDate = publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
                     
                     blogCard.innerHTML = `
@@ -1169,7 +1188,7 @@
                         <div class="p-6 flex flex-col h-full">
                             <span class="blog-card-category">${blog.category || 'Tech'}</span>
                             <h3 class="blog-card-title">${blog.title}</h3>
-                            <p class="blog-card-description">${blog.excerpt || blog.description}</p>
+                            <p class="blog-card-description">${blog.excerpt || blog.description || 'No description'}</p>
                             <div class="blog-card-meta">
                                 <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
                                 <span><i class="fas fa-clock"></i> ${blog.readTime || '5'} min</span>
@@ -1182,7 +1201,7 @@
                     blogGrid.appendChild(blogCard);
                 });
             } catch (error) {
-                console.error("Error loading blog posts:", error);
+                console.error("❌ Error loading blog posts:", error);
             }
         }
 

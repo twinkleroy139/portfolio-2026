@@ -1220,6 +1220,16 @@
             e.preventDefault();
             
             const editId = e.target.dataset.editId;
+            const publishDateInput = document.getElementById('blogPublishDate').value;
+            
+            // Create proper Firestore timestamp
+            let publishDate;
+            if (publishDateInput) {
+                publishDate = new Date(publishDateInput);
+            } else {
+                publishDate = new Date();
+            }
+            
             const blogData = {
                 title: document.getElementById('blogTitle').value,
                 category: document.getElementById('blogCategory').value,
@@ -1229,7 +1239,7 @@
                 link: document.getElementById('blogLink').value,
                 excerpt: document.getElementById('blogExcerpt').value,
                 description: document.getElementById('blogDescription').value,
-                publishDate: new Date(document.getElementById('blogPublishDate').value || new Date()),
+                publishDate: publishDate,
                 updatedAt: serverTimestamp()
             };
 
@@ -1307,6 +1317,8 @@
                 const list = document.getElementById('blogList');
                 list.innerHTML = '';
 
+                console.log('📝 Admin: Blog posts found:', snapshot.size);
+
                 if (snapshot.empty) {
                     list.innerHTML = '<p class="text-gray-400">No blog posts yet. Create one to get started!</p>';
                     return;
@@ -1314,7 +1326,21 @@
 
                 snapshot.forEach((doc) => {
                     const data = doc.data();
-                    const publishDate = data.publishDate?.toDate ? data.publishDate.toDate() : new Date(data.publishDate);
+                    console.log('📄 Admin: Blog post:', data.title, data);
+                    
+                    let publishDate;
+                    if (data.publishDate) {
+                        if (data.publishDate.toDate && typeof data.publishDate.toDate === 'function') {
+                            publishDate = data.publishDate.toDate();
+                        } else if (data.publishDate instanceof Date) {
+                            publishDate = data.publishDate;
+                        } else {
+                            publishDate = new Date(data.publishDate);
+                        }
+                    } else {
+                        publishDate = new Date();
+                    }
+                    
                     const formattedDate = publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
                     
                     list.innerHTML += `
