@@ -1229,6 +1229,10 @@
             }
         }
 
+        // Expose for debugging in browser console
+        window.db = db;
+        window.loadBlogPosts = loadBlogPosts;
+
         loadBlogPosts();
     </script>
 </body>
