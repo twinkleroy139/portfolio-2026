@@ -1246,10 +1246,12 @@
             try {
                 if (editId) {
                     await setDoc(doc(db, 'blogPosts', editId), blogData, { merge: true });
+                    console.log('✅ Blog post updated (id):', editId, blogData);
                     alert('✅ Blog post updated successfully!');
                 } else {
-                    await addDoc(collection(db, 'blogPosts'), blogData);
-                    alert('✅ Blog post added successfully!');
+                    const docRef = await addDoc(collection(db, 'blogPosts'), blogData);
+                    console.log('✅ Blog post added with ID:', docRef.id, blogData);
+                    alert('✅ Blog post added successfully! ID: ' + docRef.id);
                 }
                 e.target.reset();
                 delete e.target.dataset.editId;
