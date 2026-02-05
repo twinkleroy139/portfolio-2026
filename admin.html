@@ -456,6 +456,28 @@
         </div>
     </div>
 
+    <!-- Define switchSection early so it's available globally -->
+    <script>
+        window.switchSection = function(section) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Show the selected section
+            const sectionEl = document.getElementById(`section-${section}`);
+            if (sectionEl) {
+                sectionEl.classList.add('active');
+            }
+            
+            // Add active to the clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        };
+    </script>
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, doc, orderBy, query, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
@@ -498,26 +520,6 @@
         if (pass !== ADMIN_PASSWORD) {
             location.href = "/login.html";
         }
-
-        // ===== TAB NAVIGATION =====
-        window.switchSection = function(section) {
-            // Hide all sections
-            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
-            
-            // Remove active from all buttons
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            // Show the selected section
-            const sectionEl = document.getElementById(`section-${section}`);
-            if (sectionEl) {
-                sectionEl.classList.add('active');
-            }
-            
-            // Add active to the clicked button
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-        };
 
         // ===== MESSAGES =====
         async function loadMessages() {
