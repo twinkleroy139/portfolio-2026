@@ -26,26 +26,52 @@
             <i class="fas fa-times text-2xl"></i>
         </button>
 
-        <!-- Profile Image -->
+
+
+
+
+
+
+
+        
+   <!-- Profile Image -->
         <img id="navProfileImage"
             src="https://imgs.search.brave.com/ntLd9g5FWU0biphaC1KAVUJuOltomYnVGvsQpcZhCu8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFlL2Rl/L2I3LzFlZGViN2Uw/ZDY5MTFkNTZlNDRk/MjE1YTE4YWRjNjU5/LmpwZw"
             alt="Profile"
             class="w-32 h-32 rounded-full object-cover mb-6 border-2 border-cyan-400" />
         
         <!-- Profile Name -->
-        <div class="flex items-center mb-12">
+        <div class="flex items-center mb-6">
             <h1 id="navProfileName" class="text-2xl font-bold text-cyan-400">Your Name</h1>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="flex gap-2 mb-10 justify-center" id="navSocialIcons">
+            <a href="#" id="nav-github" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="#" id="nav-linkedin" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="#" id="nav-twitter" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" id="nav-instagram" target="_blank" rel="noopener noreferrer" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-cyan-400 hover:bg-cyan-400 hover:text-black transition-all hover:scale-110 text-sm" title="Instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
         </div>
 
         <!-- Navigation Menu -->
         <ul class="space-y-6 text-lg flex-1">
-            <li><a href="index.html#hero" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-home mr-3"></i>Quest</a></li>
-            <li><a href="index.html#about" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-user mr-3"></i>About</a></li>
-            <li><a href="index.html#education" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-graduation-cap mr-3"></i>Education</a></li>
-            <li><a href="index.html#skills" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-code mr-3"></i>Skills</a></li>
-            <li><a href="index.html#projects" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Projects</a></li>
-            <li><a href="index.html#contact" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-envelope mr-3"></i>Contact</a></li>
-            <li><a href="admin.html" class="flex items-center text-cyan-400 hover:text-white transition-all"><i class="fas fa-cog mr-3"></i>Dashboard</a></li>
+            <li><a href="#hero" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-home mr-3"></i>Quest</a></li>
+            <li><a href="#about" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-user mr-3"></i>About</a></li>
+            <li><a href="#education" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-graduation-cap mr-3"></i>Education</a></li>
+            <li><a href="#job-experience" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Job Experience</a></li>
+            <li><a href="#skills" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-code mr-3"></i>Skills</a></li>
+            <li><a href="#projects" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Projects</a></li>
+            <li><a href="#blog" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-blog mr-3"></i>Insights & Blog</a></li>
+            <li><a href="#contact" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-envelope mr-3"></i>Contact</a></li>
+            <li><a href="admin.html" class="flex items-center text-red-400 hover:text-white transition-all"><i class="fas fa-cog mr-3"></i>Admin</a></li>
         </ul>
     </nav>
 
@@ -78,17 +104,28 @@
 
         <!-- Navigation Tabs -->
         <div class="flex gap-2 mb-8 flex-wrap">
-            <button onclick="switchSection('profile')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-id-card mr-2"></i>Profile</button>
-            <button onclick="switchSection('hero')" class="tab-btn active px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-image mr-2"></i>Hero</button>
-            <button onclick="switchSection('about')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-user mr-2"></i>About</button>
-            <button onclick="switchSection('education')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-graduation-cap mr-2"></i>Education</button>
-            <button onclick="switchSection('experience')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Experience</button>
-            <button onclick="switchSection('skills')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-bolt mr-2"></i>Skills</button>
-            <button onclick="switchSection('projects')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Projects</button>
-            <button onclick="switchSection('blog')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-pen-fancy mr-2"></i>Blog</button>
-            <button onclick="switchSection('messages')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-envelope mr-2"></i>Messages <span id="messageCount" class="bg-red-500 px-2 py-1 rounded ml-2 text-xs">0</span></button>
-            <button onclick="switchSection('contact')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-phone mr-2"></i>Contact Info</button>
+            <button onclick="switchSection('profile', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-id-card mr-2"></i>Profile</button>
+            <button onclick="switchSection('hero', this)" class="tab-btn active px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-image mr-2"></i>Hero</button>
+            <button onclick="switchSection('about', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-user mr-2"></i>About</button>
+            <button onclick="switchSection('education', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-graduation-cap mr-2"></i>Education</button>
+            <button onclick="switchSection('experience', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Experience</button>
+            <button onclick="switchSection('skills', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-bolt mr-2"></i>Skills</button>
+            <button onclick="switchSection('projects', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Projects</button>
+            <button onclick="switchSection('blog', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-pen-fancy mr-2"></i>Blog</button>
+            <button onclick="switchSection('messages', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-envelope mr-2"></i>Messages <span id="messageCount" class="bg-red-500 px-2 py-1 rounded ml-2 text-xs">0</span></button>
+            <button onclick="switchSection('contact', this)" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-phone mr-2"></i>Contact Info</button>
         </div>
+
+
+
+
+
+
+
+
+
+
+
 
         <!-- ===== PROFILE SECTION ===== -->
         <div id="section-profile" class="section-content">
@@ -458,7 +495,7 @@
 
     <!-- Define switchSection early so it's available globally -->
     <script>
-        window.switchSection = function(section) {
+        window.switchSection = function(section, button) {
             // Hide all sections
             document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
             
@@ -472,9 +509,12 @@
             }
             
             // Add active to the clicked button
-            if (event && event.target) {
-                event.target.classList.add('active');
+            if (button) {
+                button.classList.add('active');
             }
+            
+            // Scroll to top for better UX
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         // Mobile Navigation Toggle
@@ -1202,18 +1242,29 @@
             }
         };
 
-        // Initialize all sections
-        loadProfileForm();
-        loadSocialLinks();
-        loadHeroImages();
-        loadAboutForm();
-        loadEducationForm();
-        loadExperience();
-        loadSkills();
-        loadProjects();
-        loadBlogPosts();
-        loadMessages();
-        loadContactForm();
+        // Initialize all sections with delay to ensure DOM is ready
+        setTimeout(() => {
+            // Ensure hero section is visible on page load
+            const heroSection = document.getElementById('section-hero');
+            if (heroSection) {
+                heroSection.classList.add('active');
+            }
+            
+            // Load all data
+            loadProfileForm();
+            loadSocialLinks();
+            loadHeroImages();
+            loadAboutForm();
+            loadEducationForm();
+            loadExperience();
+            loadSkills();
+            loadProjects();
+            loadBlogPosts();
+            loadMessages();
+            loadContactForm();
+            
+            console.log('✅ Admin Dashboard Initialized - All sections loaded from Firebase');
+        }, 100);
 
         // ===== BLOG MANAGEMENT =====
         document.getElementById('addBlogForm').addEventListener('submit', async (e) => {
