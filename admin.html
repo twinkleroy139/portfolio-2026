@@ -476,20 +476,28 @@
                 event.target.classList.add('active');
             }
         };
+
+        // Mobile Navigation Toggle
+        window.toggleMobileNav = function() {
+            const sideNav = document.getElementById('sideNav');
+            const navOverlay = document.getElementById('navOverlay');
+            
+            if (sideNav && navOverlay) {
+                sideNav.classList.toggle('-translate-x-full');
+                navOverlay.classList.toggle('active');
+            }
+        };
+
+        // Logout function
+        window.logout = function() {
+            localStorage.removeItem("adminPass");
+            location.href = "/login.html";
+        };
     </script>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getFirestore, collection, addDoc, getDocs, getDoc, deleteDoc, doc, orderBy, query, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-        // Mobile Navigation Toggle
-        function toggleMobileNav() {
-            const sideNav = document.getElementById('sideNav');
-            const navOverlay = document.getElementById('navOverlay');
-            
-            sideNav.classList.toggle('-translate-x-full');
-            navOverlay.classList.toggle('active');
-        }
 
         // Close mobile menu on window resize
         window.addEventListener('resize', () => {
@@ -498,9 +506,6 @@
                 document.getElementById('navOverlay').classList.remove('active');
             }
         });
-
-        // Make toggle available globally
-        window.toggleMobileNav = toggleMobileNav;
 
         const firebaseConfig = {
             apiKey: "AIzaSyDXaBrKqNaTFmvBYmfhT-fpePzzrL8nBWk",
@@ -1195,11 +1200,6 @@
                 await deleteDoc(doc(db, 'projects', id));
                 loadProjects();
             }
-        };
-
-        window.logout = () => {
-            localStorage.removeItem("adminPass");
-            location.href = "/login.html";
         };
 
         // Initialize all sections
