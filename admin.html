@@ -871,6 +871,8 @@
                 } else {
                     await addDoc(collection(db, 'projects'), { title, category, img, techStack, previewLink, detailsLink, desc, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
                     alert('✅ Project added!');
+                    // Notify other tabs that a new project was added
+                    localStorage.setItem('projectUpdated', new Date().getTime());
                 }
 
                 loadProjects();
