@@ -482,6 +482,38 @@ footer h3:hover::after {
 }
 
 /* ============================================
+   EXPERIENCE TIMELINE STYLES
+   ============================================ */
+
+#experience .space-y-8 > .flex {
+    align-items: flex-start;
+}
+
+#experienceTimeline .ml-6 {
+    border-left: 1px solid rgba(147,51,234,0.06);
+    padding-left: 1rem;
+}
+
+#experience .w-3.h-3 {
+    box-shadow: 0 0 14px rgba(147,51,234,0.12), 0 0 30px rgba(0,212,255,0.04);
+}
+
+#experienceTimeline .bg-black\/40 {
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+#experienceTimeline .bg-black\/40:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(2,8,23,0.7), 0 0 40px rgba(147,51,234,0.06);
+}
+
+@media (max-width: 768px) {
+    #experience .ml-6 { padding-left: .75rem; }
+    #experience .w-6 { display: none; }
+    #experience .ml-6 .text-sm { font-size: 0.85rem; }
+}
+
+/* ============================================
    PREMIUM TECH STYLING - PROJECTS & CONTACT
    ============================================ */
 

@@ -82,6 +82,7 @@
             <button onclick="switchSection('hero')" class="tab-btn active px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-image mr-2"></i>Hero</button>
             <button onclick="switchSection('about')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-user mr-2"></i>About</button>
             <button onclick="switchSection('education')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-graduation-cap mr-2"></i>Education</button>
+            <button onclick="switchSection('experience')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Experience</button>
             <button onclick="switchSection('skills')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-bolt mr-2"></i>Skills</button>
             <button onclick="switchSection('projects')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-briefcase mr-2"></i>Projects</button>
             <button onclick="switchSection('messages')" class="tab-btn px-4 py-2 rounded-lg font-bold transition-all"><i class="fas fa-envelope mr-2"></i>Messages <span id="messageCount" class="bg-red-500 px-2 py-1 rounded ml-2 text-xs">0</span></button>
@@ -299,6 +300,45 @@
                         <i class="fas fa-save mr-2"></i>Save Education Section
                     </button>
                 </form>
+            </div>
+        </div>
+
+        <!-- ===== EXPERIENCE SECTION ===== -->
+        <div id="section-experience" class="section-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Add Experience Form -->
+                <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 md:col-span-1">
+                    <h2 class="text-2xl font-bold mb-6 text-cyan-400"><i class="fas fa-briefcase mr-2"></i>Add Experience</h2>
+                    <form id="addExperienceForm" class="space-y-4">
+                        <input type="text" id="expTitle" placeholder="Job Title (e.g., Frontend Developer)"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <input type="text" id="expCompany" placeholder="Company Name"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="expStart" placeholder="Start (e.g., Jun 2023)"
+                                class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                            <input type="text" id="expEnd" placeholder="End (e.g., Present or Dec 2024)"
+                                class="p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400">
+                        </div>
+                        <textarea id="expDesc" placeholder="Short description" rows="3"
+                            class="w-full p-4 rounded-xl bg-black/30 border border-gray-600 text-white focus:border-cyan-400"></textarea>
+                        <div class="flex gap-3">
+                            <button type="submit"
+                                class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 p-4 rounded-xl text-xl font-bold">
+                                <i class="fas fa-plus mr-2"></i><span id="experienceSubmitText">Add Experience</span>
+                            </button>
+                            <button id="cancelExpEditBtn" type="button" class="hidden bg-gray-700 hover:bg-gray-600 p-4 rounded-xl text-white">Cancel Edit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Experience List -->
+                <div class="bg-black/50 backdrop-blur-md rounded-3xl p-8 md:col-span-1">
+                    <h2 class="text-2xl font-bold mb-6 text-cyan-400">Work Experience</h2>
+                    <div id="experienceList" class="space-y-3">
+                        <!-- Loads dynamically -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -841,6 +881,141 @@
             }
         };
 
+        // ===== EXPERIENCE MANAGEMENT =====
+        document.getElementById('addExperienceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const editId = form.dataset.editId || '';
+            const title = document.getElementById('expTitle').value;
+            const company = document.getElementById('expCompany').value;
+            const startDate = document.getElementById('expStart').value || '';
+            const endDate = document.getElementById('expEnd').value || '';
+            const desc = document.getElementById('expDesc').value || '';
+
+            if (!title || !company) {
+                alert('❌ Please provide at least a title and company');
+                return;
+            }
+
+            try {
+                if (editId) {
+                    await setDoc(doc(db, 'experience', editId), { title, company, startDate, endDate, desc, updatedAt: serverTimestamp() }, { merge: true });
+                    alert('✅ Experience updated!');
+                    delete form.dataset.editId;
+                    document.getElementById('experienceSubmitText').textContent = 'Add Experience';
+                    document.getElementById('cancelExpEditBtn').classList.add('hidden');
+                } else {
+                    await addDoc(collection(db, 'experience'), { title, company, startDate, endDate, desc, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                    alert('✅ Experience added!');
+                    localStorage.setItem('experienceUpdated', new Date().getTime());
+                }
+
+                loadExperience();
+                form.reset();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        async function loadExperience() {
+            try {
+                const q = query(collection(db, 'experience'), orderBy('startDate'));
+                const snapshot = await getDocs(q);
+                const list = document.getElementById('experienceList');
+                list.innerHTML = '';
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    list.innerHTML += `
+                        <div class="p-4 bg-gray-800/50 rounded-xl group hover:bg-gray-700/50">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-lg text-cyan-300">${data.title} <span class="text-sm text-gray-300">@ ${data.company}</span></h3>
+                                    <div class="text-gray-400 text-sm mt-2">${data.startDate?data.startDate:''}${data.endDate?(' — '+data.endDate):''}</div>
+                                    <div class="mt-3 text-gray-300 text-sm">${(data.desc||'').substring(0,240)}${(data.desc||'').length>240? '...':''}</div>
+                                </div>
+                                <div class="flex flex-col items-end ml-4 gap-3">
+                                    <div class="flex gap-2">
+                                        <button onclick="editExperience('${doc.id}')" class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded">Edit</button>
+                                        <button onclick="deleteExperience('${doc.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                // fallback: try without ordering
+                try {
+                    const snapshot = await getDocs(collection(db, 'experience'));
+                    const list = document.getElementById('experienceList');
+                    list.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        list.innerHTML += `
+                            <div class="p-4 bg-gray-800/50 rounded-xl group hover:bg-gray-700/50">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h3 class="font-bold text-lg text-cyan-300">${data.title} <span class="text-sm text-gray-300">@ ${data.company}</span></h3>
+                                        <div class="text-gray-400 text-sm mt-2">${data.startDate?data.startDate:''}${data.endDate?(' — '+data.endDate):''}</div>
+                                        <div class="mt-3 text-gray-300 text-sm">${(data.desc||'').substring(0,240)}${(data.desc||'').length>240? '...':''}</div>
+                                    </div>
+                                    <div class="flex flex-col items-end ml-4 gap-3">
+                                        <div class="flex gap-2">
+                                            <button onclick="editExperience('${doc.id}')" class="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded">Edit</button>
+                                            <button onclick="deleteExperience('${doc.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } catch (err) {
+                    console.error('Error loading experience:', err);
+                }
+            }
+        }
+
+        window.deleteExperience = async (id) => {
+            if (confirm('Delete this experience?')) {
+                try {
+                    await deleteDoc(doc(db, 'experience', id));
+                    loadExperience();
+                } catch (error) {
+                    alert('❌ Error: ' + error.message);
+                }
+            }
+        };
+
+        window.editExperience = async (id) => {
+            try {
+                const snap = await getDoc(doc(db, 'experience', id));
+                if (!snap.exists()) return alert('Experience not found');
+                const data = snap.data();
+                const form = document.getElementById('addExperienceForm');
+                form.dataset.editId = id;
+                document.getElementById('expTitle').value = data.title || '';
+                document.getElementById('expCompany').value = data.company || '';
+                document.getElementById('expStart').value = data.startDate || '';
+                document.getElementById('expEnd').value = data.endDate || '';
+                document.getElementById('expDesc').value = data.desc || '';
+                document.getElementById('experienceSubmitText').textContent = 'Update Experience';
+                document.getElementById('cancelExpEditBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error editing experience:', error);
+            }
+        };
+
+        // Cancel experience edit
+        document.getElementById('cancelExpEditBtn').addEventListener('click', (e) => {
+            const form = document.getElementById('addExperienceForm');
+            delete form.dataset.editId;
+            form.reset();
+            document.getElementById('experienceSubmitText').textContent = 'Add Experience';
+            document.getElementById('cancelExpEditBtn').classList.add('hidden');
+        });
+
         // ===== PROJECTS =====
         document.getElementById('addProjectForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -972,6 +1147,7 @@
         loadHeroImages();
         loadAboutForm();
         loadEducationForm();
+        loadExperience();
         loadSkills();
         loadProjects();
         loadMessages();

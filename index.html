@@ -326,6 +326,22 @@
         </section>
 
 
+        <!-- Experience -->
+        <section id="experience" class="py-12 md:py-24 bg-black/10 rounded-3xl mx-0 md:mx-12 mb-12 px-4 md:px-0">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 text-center mb-8">Experience</h2>
+                <p class="text-sm md:text-base text-gray-300 max-w-4xl mx-auto text-center mb-12">My professional and freelance experience — roles, companies, and durations presented in a clean timeline.</p>
+
+                <div class="max-w-3xl mx-auto px-2 md:px-0">
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-6">Work Timeline</h3>
+                    <div class="space-y-8" id="experienceTimeline">
+                        <!-- Experience items load here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
         <!-- Skills -->
         <section id="skills" class="py-12 md:py-32 bg-black/30 rounded-3xl mx-0 md:mx-12 mb-12 md:mb-32 px-4 md:px-0">
             <h2 class="text-3xl md:text-5xl font-bold text-center mb-12 md:mb-20 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Skills & Stats</h2>
@@ -843,11 +859,15 @@
         // Load projects on page load
         loadProjects();
 
-        // Listen for project updates from admin panel
+        // Listen for updates from admin panel (projects, experience)
         window.addEventListener('storage', (e) => {
             if (e.key === 'projectUpdated') {
                 console.log('📢 Projects updated in another tab, reloading...');
                 loadProjects();
+            }
+            if (e.key === 'experienceUpdated') {
+                console.log('📢 Experience updated in another tab, reloading...');
+                loadExperienceData();
             }
         });
 
@@ -900,9 +920,51 @@
             }
         }
 
+        // Load Experience section from Firestore
+        async function loadExperienceData() {
+            try {
+                const snap = await getDocs(collection(db, 'experience'));
+                const container = document.getElementById('experienceTimeline');
+                if (!container) return;
+                container.innerHTML = '';
+
+                if (snap.empty) {
+                    container.innerHTML = '<div class="text-center text-gray-400 py-8">No experience entries yet.</div>';
+                    return;
+                }
+
+                const items = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+                items.sort((a,b) => {
+                    const aStart = a.data.startDate ? Date.parse(a.data.startDate) : (a.data.createdAt? (a.data.createdAt.seconds? a.data.createdAt.seconds*1000 : Date.parse(a.data.createdAt)) : 0);
+                    const bStart = b.data.startDate ? Date.parse(b.data.startDate) : (b.data.createdAt? (b.data.createdAt.seconds? b.data.createdAt.seconds*1000 : Date.parse(b.data.createdAt)) : 0);
+                    return bStart - aStart;
+                });
+
+                items.forEach((item) => {
+                    const d = item.data;
+                    container.innerHTML += `
+                        <div class="flex">
+                            <div class="w-6 flex items-start justify-center">
+                                <div class="w-3 h-3 bg-cyan-400 rounded-full mt-2"></div>
+                                <div class="w-px bg-cyan-400 flex-1 ml-1"></div>
+                            </div>
+                            <div class="ml-6 bg-black/40 p-4 rounded-xl flex-1">
+                                <h4 class="font-bold text-white text-sm md:text-base">${d.title || ''}</h4>
+                                <p class="text-xs md:text-sm text-gray-300 mt-1">${d.company || ''} ${d.startDate? ('| ' + d.startDate + (d.endDate? ' – ' + d.endDate : '')) : ''}</p>
+                                <p class="text-sm text-gray-300 mt-3">${(d.desc||'')}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading experience:', error);
+            }
+        }
+
         // Load both sections
         loadAboutData();
         loadEducationData();
+        loadExperienceData();
 
         // Load Skills from Firestore
         async function loadSkills() {
