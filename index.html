@@ -56,8 +56,10 @@
             <li><a href="#hero" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-home mr-3"></i>Quest</a></li>
             <li><a href="#about" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-user mr-3"></i>About</a></li>
             <li><a href="#education" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-graduation-cap mr-3"></i>Education</a></li>
+            <li><a href="#job-experience" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Job Experience</a></li>
             <li><a href="#skills" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-code mr-3"></i>Skills</a></li>
             <li><a href="#projects" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-briefcase mr-3"></i>Projects</a></li>
+            <li><a href="#blog" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-blog mr-3"></i>Insights & Blog</a></li>
             <li><a href="#contact" onclick="toggleMobileNav()" class="flex items-center text-gray-400 hover:text-white transition-all"><i class="fas fa-envelope mr-3"></i>Contact</a></li>
             <li><a href="admin.html" class="flex items-center text-red-400 hover:text-white transition-all"><i class="fas fa-cog mr-3"></i>Admin</a></li>
         </ul>
@@ -327,7 +329,7 @@
 
 
         <!-- Experience -->
-        <section id="experience" class="py-12 md:py-24 bg-black/10 rounded-3xl mx-0 md:mx-12 mb-12 px-4 md:px-0">
+        <section id="job-experience" class="py-12 md:py-24 bg-black/10 rounded-3xl mx-0 md:mx-12 mb-12 px-4 md:px-0">
             <div class="max-w-6xl mx-auto">
                 <h2 class="text-3xl md:text-4xl font-bold text-cyan-400 text-center mb-8">Experience</h2>
                 <p class="text-sm md:text-base text-gray-300 max-w-4xl mx-auto text-center mb-12">My professional and freelance experience — roles, companies, and durations presented in a clean timeline.</p>
@@ -424,6 +426,33 @@
     <!-- Firestore loads here -->
   </div>
 </section>
+
+        <!-- Insights & Blog Section -->
+        <section id="blog" class="py-12 md:py-32 px-4 md:px-0">
+            <h2 class="text-3xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-pink-400 to-cyan-400 bg-clip-text text-transparent">
+                <i class="fas fa-pen-fancy mr-3"></i>Insights & Blog
+            </h2>
+            <p class="text-base md:text-lg text-center text-gray-300 mb-12 md:mb-16 max-w-4xl mx-auto">
+                Diving into 2026 web trends, AI-enhanced development, affiliate strategies, and real-world tips from my journey as a WordPress specialist and tech creator. Drawing from hands-on experience in SEO, WooCommerce, and client projects like TopReview.shop.
+            </p>
+
+            <!-- Blog Posts Grid -->
+            <div id="blogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+                <!-- Blog posts load from Firestore -->
+            </div>
+
+            <!-- Newsletter Subscription -->
+            <div class="bg-gradient-to-r from-pink-500/10 to-cyan-500/10 border border-pink-400/30 rounded-2xl p-8 md:p-12 max-w-3xl mx-auto mt-16 md:mt-24 text-center backdrop-blur-md">
+                <p class="text-base md:text-lg text-gray-300 mb-6">Want more? Subscribe for updates on tech trends and tutorials.</p>
+                <div class="flex gap-3 max-w-md mx-auto">
+                    <input type="email" id="newsletterEmail" placeholder="Your Email" 
+                        class="flex-1 p-3 rounded-xl bg-black/30 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-400 text-sm md:text-base">
+                    <button onclick="subscribeNewsletter()" class="px-6 py-3 bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-pink-500/50 transition-all text-sm md:text-base whitespace-nowrap">
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+        </section>
 
 
 
@@ -1113,6 +1142,75 @@
         }
 
         loadContactInfo();
+
+        // ===== LOAD BLOG POSTS FROM FIRESTORE =====
+        async function loadBlogPosts() {
+            try {
+                const blogGrid = document.getElementById('blogGrid');
+                const q = query(collection(db, 'blogPosts'), orderBy('publishDate', 'desc'));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    blogGrid.innerHTML = '<div class="col-span-full text-center text-gray-400"><i class="fas fa-inbox text-4xl mb-4 block"></i>No blog posts yet.</div>';
+                    return;
+                }
+
+                blogGrid.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const blog = doc.data();
+                    const blogCard = document.createElement('div');
+                    blogCard.className = 'blog-card';
+                    
+                    const publishDate = blog.publishDate?.toDate ? blog.publishDate.toDate() : new Date(blog.publishDate);
+                    const formattedDate = publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    
+                    blogCard.innerHTML = `
+                        <img src="${blog.image || 'https://via.placeholder.com/400x200/1a1a3a/00d4ff?text=Blog+Post'}" alt="${blog.title}" class="blog-card-image">
+                        <div class="p-6 flex flex-col h-full">
+                            <span class="blog-card-category">${blog.category || 'Tech'}</span>
+                            <h3 class="blog-card-title">${blog.title}</h3>
+                            <p class="blog-card-description">${blog.excerpt || blog.description}</p>
+                            <div class="blog-card-meta">
+                                <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                                <span><i class="fas fa-clock"></i> ${blog.readTime || '5'} min</span>
+                                <span><i class="fas fa-eye"></i> ${blog.views || '0'}+ Views</span>
+                            </div>
+                            ${blog.link ? `<a href="${blog.link}" target="_blank" rel="noopener noreferrer" class="blog-card-link">Read More <i class="fas fa-arrow-right ml-1"></i></a>` : ''}
+                        </div>
+                    `;
+                    
+                    blogGrid.appendChild(blogCard);
+                });
+            } catch (error) {
+                console.error("Error loading blog posts:", error);
+            }
+        }
+
+        // ===== NEWSLETTER SUBSCRIPTION =====
+        async function subscribeNewsletter() {
+            const email = document.getElementById('newsletterEmail').value;
+            
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, 'subscribers'), {
+                    email: email,
+                    subscribedAt: new Date(),
+                    status: 'active'
+                });
+
+                alert('✅ Successfully subscribed! Check your email for updates.');
+                document.getElementById('newsletterEmail').value = '';
+            } catch (error) {
+                console.error("Error subscribing:", error);
+                alert('❌ Error subscribing. Please try again.');
+            }
+        }
+
+        loadBlogPosts();
     </script>
 </body>
 
